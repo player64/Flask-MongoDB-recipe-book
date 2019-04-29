@@ -1,6 +1,5 @@
 from wtforms import Form, BooleanField, StringField, PasswordField, validators
 
-
 class RegistrationForm(Form):
     username = StringField('Username', [validators.Length(min=4, max=25)])
     password = PasswordField('Password', [
@@ -13,3 +12,13 @@ class RegistrationForm(Form):
 class LoginForm(Form):
     username = StringField('Username', [validators.DataRequired()])
     password = PasswordField('Password', [validators.DataRequired()])
+
+"""
+class RecipeForm(Form):
+https://wtforms.readthedocs.io/en/stable/forms.html
+
+ form = EditProfileForm(request.POST, obj=user)
+ https://overiq.com/flask-101/form-handling-in-flask/
+form = LoginForm(MultiDict([('username', 'mariusz')]), request.form)
+"""
+

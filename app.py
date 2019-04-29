@@ -1,16 +1,20 @@
-from flask import Flask, session, request, render_template, redirect, url_for, flash, g
+from flask import Flask, session, request, render_template, redirect, url_for, flash
 from flask_pymongo import PyMongo
 from passlib.hash import sha256_crypt
 from datetime import datetime
 from bson.objectid import ObjectId
 from functools import wraps
-
+from werkzeug.datastructures import MultiDict
+from dotenv import load_dotenv
+import os
 from Author import Author
 from forms import RegistrationForm, LoginForm
 
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = 'any random string'
-app.config["MONGO_URI"] = ""
+app.secret_key = os.getenv('SECRET_KEY')
+app.config["MONGO_URI"] = os.getenv('MONGO_URI')
 mongo = PyMongo(app)
 
 
@@ -44,7 +48,7 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     global authors
-    form = LoginForm(request.form)
+    form = LoginForm(MultiDict([('username', 'mariusz')]), request.form)
     if request.method == 'POST' and form.validate():
 
         author = authors.authenticate(request.form.to_dict())
