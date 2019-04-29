@@ -9,7 +9,7 @@
 <body>
 <header>
     {% if user.id and user.username %}
-        hello, <a href="{{ url_for('user', user_id=user.id) }}"> {{ user.username }}</a>
+        hello, <a href="{{ url_for('user', user_id=user.id) }}"> {{ user.username[0]|upper}}{{user.username[1:] }}</a>
         <a href="{{ url_for('logout')}}">Logout</a>
     {% endif %}
 </header>

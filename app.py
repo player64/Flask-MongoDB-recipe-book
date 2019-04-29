@@ -10,7 +10,7 @@ from forms import RegistrationForm, LoginForm
 
 app = Flask(__name__)
 app.secret_key = 'any random string'
-app.config["MONGO_URI"] = ''
+app.config["MONGO_URI"] = ""
 mongo = PyMongo(app)
 
 
