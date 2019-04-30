@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}
+    <h1></h1>
+{% endblock %}
+{% block content %}
+    {% include '_messages.html' %}
+    <form action="{{ url_for('new_recipe') }}" method="post">
+        {% from "_formhelpers.html" import render_field %}
+        <div class="row">
+            {{ render_field(form.title, 's12') }}
+            {{ render_field(form.introduction, 's12', class='materialize-textarea') }}
+            {{ render_field(form.method, 's12') }}
+            {{ form.ingredients }}
+            {{ form.categories.type }}
+            {{ form.cuisines|safe  }}
+            {{ form.allergens }}
+            <div class="col s12">
+                <button class="waves-effect waves-light btn-large" type="submit">{{ title }}</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

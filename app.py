@@ -7,8 +7,20 @@ from functools import wraps
 from werkzeug.datastructures import MultiDict
 from dotenv import load_dotenv
 import os
+# from flask_webpack import Webpack
 from Author import Author
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, RecipeForm
+from webpackManifest import WebpackManifest
+
+# webpack = Webpack()
+"""
+params = {
+    'DEBUG': True,
+    'WEBPACK_MANIFEST_PATH': './static/manifest.json',
+    'WEBPACK_ASSETS_URL': '/static'
+}
+
+"""
 
 load_dotenv()
 
@@ -16,6 +28,14 @@ app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')
 app.config["MONGO_URI"] = os.getenv('MONGO_URI')
 mongo = PyMongo(app)
+# app.config.update(params)
+# webpack.init_app(app)
+manifest_params = {
+    'static_folder': '/static',
+    'manifest_path': './static/manifest.json'
+}
+
+manifest = WebpackManifest(app, manifest_params)
 
 
 def requires_auth(f):
@@ -48,7 +68,8 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     global authors
-    form = LoginForm(MultiDict([('username', 'mariusz')]), request.form)
+    # MultiDict([('username', 'mariusz')])
+    form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
 
         author = authors.authenticate(request.form.to_dict())
@@ -96,12 +117,27 @@ def register():
         flash(u'You have been registered', 'success')
         return redirect(url_for('login'))
 
-    return render_template('register.html', form=form)
+    return render_template('register.html', form=form, title="Register")
 
 
 @app.route('/recipe/add', methods=['GET', 'POST'])
+@requires_auth
 def new_recipe():
-    return 'Hiuhd'
+    data = MultiDict(
+        [
+            ('title', 'Ragu'),
+            ('introduction', 'some'),
+            ('method-0', 'Add some'),
+            ('method-1', 'Add some'),
+            ('method-2', 'Add two'),
+            ('categories-0', 'Bake'),
+            ('categories-1', 'Chicken')
+        ]
+    )
+    form = RecipeForm(data, request.form)
+    if request.method == 'POST' and form.validate():
+        return 'Post'
+    return render_template('recipe_edit.html', form=form, title='Add recipe')
 
 
 @app.route('/user/<user_id>')
