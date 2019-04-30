@@ -1,9 +1,8 @@
 const Path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
-
+const WebpackAssetsManifest = require('webpack-assets-manifest');
 
 module.exports = {
     entry: {
@@ -15,7 +14,7 @@ module.exports = {
     },
     optimization: {
         splitChunks: {
-            chunks: 'all',
+            chunks: 'initial', // async // all
             name: false
         }
     },
@@ -27,11 +26,12 @@ module.exports = {
         new CleanWebpackPlugin(['static'], { root: Path.resolve(__dirname, '../..') }),
         new CopyWebpackPlugin([
             {from: Path.resolve(__dirname, '../images'), to: '../static/images'}
-        ])
+        ]),
+        new WebpackAssetsManifest()
     ],
     resolve: {
         alias: {
-            '~': Path.resolve(__dirname, 'assets')
+            '~': Path.resolve(__dirname, '../../assets')
         }
     },
     module: {

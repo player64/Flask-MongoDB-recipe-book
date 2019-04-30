@@ -3,7 +3,7 @@ const Webpack = require('webpack');
 const merge = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const common = require('./webpack.common.js');
-const WebpackAssetsManifest = require('webpack-assets-manifest');
+// const WebpackAssetsManifest = require('webpack-assets-manifest');
 
 module.exports = merge(common, {
     mode: 'production',
@@ -18,15 +18,15 @@ module.exports = merge(common, {
         new Webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production')
         }),
-        new Webpack.optimize.ModuleConcatenationPlugin(),
+        // new Webpack.optimize.ModuleConcatenationPlugin(),
         new MiniCssExtractPlugin({
-            filename: 'css/app.[chunkhash:8].css'
-        }),
-        new WebpackAssetsManifest({
+            filename: 'css/app.css'
+        })
+        /*new WebpackAssetsManifest({
             output: 'manifest.json',
             space: 2,
             writeToDisk: false
-        }),
+        }),*/
     ],
     module: {
         rules: [

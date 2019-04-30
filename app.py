@@ -17,7 +17,7 @@ from webpackManifest import WebpackManifest
 params = {
     'DEBUG': True,
     'WEBPACK_MANIFEST_PATH': './static/manifest.json',
-    'WEBPACK_ASSETS_URL': '/static'
+    'WEBPACK_ASSETS_URL': '/static' 
 }
 
 """
