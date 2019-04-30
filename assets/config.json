@@ -1,0 +1,17 @@
+{
+  "entry": {
+    "main": [
+      "./scripts/main.js",
+      "./styles/main.scss"
+    ]
+  },
+  "publicPath": "./",
+  "devUrl": "http://127.0.0.1:5000",
+  "proxyUrl": "http://localhost:3000",
+  "cacheBusting": "[name]_[hash:8]",
+  "watch": [
+    "**/*.py",
+    "templates/**/*.html",
+    "resources/views/**/*.php"
+  ]
+}
