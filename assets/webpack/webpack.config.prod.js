@@ -20,7 +20,7 @@ module.exports = merge(common, {
         }),
         // new Webpack.optimize.ModuleConcatenationPlugin(),
         new MiniCssExtractPlugin({
-            filename: 'css/app.css'
+            filename: 'css/[name].[hash:8].css'
         })
         /*new WebpackAssetsManifest({
             output: 'manifest.json',

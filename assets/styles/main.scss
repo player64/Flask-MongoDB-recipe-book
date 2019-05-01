@@ -1,4 +1,6 @@
-$bg-colour: green;
+@import "~materialize-css/sass/materialize";
+
+$bg-colour: #fff;
 
 body {
   background-color: $bg-colour;
@@ -6,5 +8,5 @@ body {
 }
 
 h1 {
-  color: red !important;
+  color: green !important;
 }

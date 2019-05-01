@@ -1,10 +1,10 @@
 import '../styles/main.scss';
+import 'materialize-css/dist/js/materialize';
+
 
 const app = (opt) => {
     $('h1').css('color','red');
-    console.log(`init ${opt}`);
-
-    $('body').append(`<h1>Smash !!</h1>`);
+    console.log(`Hello ${opt}`);
 };
 
 app('webpack');

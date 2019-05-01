@@ -1,7 +1,6 @@
 import json
 import os
-from flask import url_for
-from base64 import b64encode
+
 
 class WebpackManifest:
     JsonExist = False
@@ -34,6 +33,7 @@ class WebpackManifest:
         if self.JsonExist and args in self.manifest:
             asset_path = '{}/{}'.format(self.staticFolder, self.manifest[args])
             return '<script src="{0}"></script>'.format(asset_path)
+            # return False
         else:
             return ''
 
@@ -41,11 +41,7 @@ class WebpackManifest:
         if self.JsonExist and args in self.manifest:
             asset_path = '{}/{}'.format(self.staticFolder, self.manifest[args])
             css = '<link rel="stylesheet" href="{0}">'.format(asset_path)
-            return asset_path
-            #return css.encode('utf-8')
-            # asset_path = '{}/{}'.format(self.staticFolder, self.manifest[args])
-
-            # return asset_path
+            return css
         else:
             return ''
 

@@ -32,11 +32,21 @@ module.exports = merge(common, {
                 // (which should be serving on http://localhost:3100/)
                 // through BrowserSync
                 proxy: 'http://127.0.0.1:5000/',
-                watch: [
+                reloadDelay: 500, // help with browser cache
+                open: false,
+                files: [
                     "*.py",
+                    "**/*.py",
                     "templates/**/*.html"
-                ],
-                files: ['./static/css/!*.css', './static/js/!*.js']
+                ]
+                // watch: true,
+                // server: "./"
+                /*watch: [
+                    "*.py",
+                    //"**!/!*.py",
+                    "templates/!**!/!*.html"
+                ],*/
+                // files: ['./static/css/!*.css', './static/js/!*.js']
             },
             // plugin options
             {

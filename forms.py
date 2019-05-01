@@ -26,7 +26,7 @@ https://stackoverflow.com/questions/32021650/how-to-validate-an-array-with-wtfor
 
 
 {{ form.method.data }}
-{{ form.method.label }} 
+{{ form.method.label }}   
 """
 
 
