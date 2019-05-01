@@ -1,7 +1,7 @@
 import json
 import os
 from flask import url_for
-
+from base64 import b64encode
 
 class WebpackManifest:
     JsonExist = False
@@ -14,7 +14,6 @@ class WebpackManifest:
             self.app = app
             self.JsonExist = self._file_exists(self.manifestPath)
             self.init_app()
-            print(self.JsonExist)
         except IOError:
             raise RuntimeError(
                 "Incorrect parameters passed to WebpackManifest"
@@ -22,8 +21,8 @@ class WebpackManifest:
 
     def init_app(self):
         self._set_asset_paths()
-        self.app.add_template_global(self.manifest_javascript)
-        # app.add_template_global(self.stylesheet_tag)
+        self.app.add_template_global(self.manifest_js)
+        self.app.add_template_global(self.manifest_css)
         # app.add_template_global(self.asset_url_for)
 
     def _set_asset_paths(self):
@@ -31,24 +30,25 @@ class WebpackManifest:
             with self.app.open_resource(self.manifestPath, 'r') as stats_json:
                 self.manifest = json.load(stats_json)
 
-    def manifest_javascript(self, *args):
-        tags = []
+    def manifest_js(self, args):
+        if self.JsonExist and args in self.manifest:
+            asset_path = '{}/{}'.format(self.staticFolder, self.manifest[args])
+            return '<script src="{0}"></script>'.format(asset_path)
+        else:
+            return ''
 
-        for arg in args:
-            if self.JsonExist and arg in self.manifest:
-                asset_path = '{}/{}'.format(self.staticFolder, self.manifest[arg])
-                tags.append('<script src="{0}"></script>'.format(asset_path))
-            """
-            else:
-                if self._file_exists(self.staticFolder + '/js/' + arg):
-                    asset_path = url_for('static', filename='js/' + arg)
-                else:
-                    asset_path = None
-            if asset_path:
-                tags.append('<script src="{0}"></script>'.format(asset_path))
-            """
+    def manifest_css(self, args):
+        if self.JsonExist and args in self.manifest:
+            asset_path = '{}/{}'.format(self.staticFolder, self.manifest[args])
+            css = '<link rel="stylesheet" href="{0}">'.format(asset_path)
+            return asset_path
+            #return css.encode('utf-8')
+            # asset_path = '{}/{}'.format(self.staticFolder, self.manifest[args])
 
-        return '\n'.join(tags)
+            # return asset_path
+        else:
+            return ''
 
-    def _file_exists(self, path):
+    @staticmethod
+    def _file_exists(path):
         return os.path.isfile(path)

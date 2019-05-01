@@ -7,13 +7,14 @@
     {#
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 #}
-    <link rel="stylesheet" href="{{  url_for('static', filename='css/app.css') }}">
+    <link rel="stylesheet" href="{{ manifest_css('app.css') }}">
 </head>
 <body>
+
 <header>
     {% if user.id and user.username %}
-        hello, <a href="{{ url_for('user', user_id=user.id) }}"> {{ user.username[0]|upper}}{{user.username[1:] }}</a>
-        <a href="{{ url_for('logout')}}">Logout</a>
+        hello, <a href="{{ url_for('user', user_id=user.id) }}"> {{ user.username[0]|upper }}{{ user.username[1:] }}</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
     {% endif %}
 </header>
 <div class="container">
@@ -27,8 +28,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="{{  url_for('static', filename='js/app.js') }}"></script>
 #}
-<script src="{{  url_for('static', filename='js/0.chunk.js') }}"></script>
-
-{{ manifest_javascript('app.js') | safe }}
+{{ manifest_js('runtime.js') | safe }}
+{{ manifest_js('npm.style-loader.js') | safe }}
+{{ manifest_js('npm.jquery.js') | safe }}
+{{ manifest_js('app.js') | safe }}
 </body>
 </html>

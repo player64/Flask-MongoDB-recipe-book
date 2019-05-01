@@ -69,14 +69,14 @@ module.exports = merge(common, {
             },
             {
                 test: /\.s?css$/i,
-                include: Path.resolve(__dirname, '../../assets'),
+                /*include: Path.resolve(__dirname, '../../assets'),
                 use: [
                     MiniCssExtractPlugin.loader,
                     'css-loader',
                     'sass-loader'
-                ]
+                ]*/
                 // include: Path.resolve(__dirname, '../../assets'),
-                ///use: ['style-loader', 'css-loader?sourceMap=true', 'sass-loader']
+                use: ['style-loader', 'css-loader?sourceMap=true', 'sass-loader']
             }
         ]
     },
