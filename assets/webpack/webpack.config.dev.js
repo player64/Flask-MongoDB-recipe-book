@@ -28,9 +28,6 @@ module.exports = merge(common, {
                 // browse to http://localhost:3000/ during development
                 host: 'localhost',
                 port: 3000,
-                // proxy the Webpack Dev Server endpoint
-                // (which should be serving on http://localhost:3100/)
-                // through BrowserSync
                 proxy: 'http://127.0.0.1:5000/',
                 reloadDelay: 500, // help with browser cache
                 open: false,
@@ -39,25 +36,11 @@ module.exports = merge(common, {
                     "**/*.py",
                     "templates/**/*.html"
                 ]
-                // watch: true,
-                // server: "./"
-                /*watch: [
-                    "*.py",
-                    //"**!/!*.py",
-                    "templates/!**!/!*.html"
-                ],*/
-                // files: ['./static/css/!*.css', './static/js/!*.js']
             },
             // plugin options
             {
-                //         // prevent BrowserSync from reloading the page
-                //         // and let Webpack Dev Server take care of this
-                // injectCss: true,
+                injectCss: true,
                 reload: true,
-                //         watch: [
-                //             "*.py",
-                //             "templates/!**/!*.html"
-                //         ],
             }
         )
     ],

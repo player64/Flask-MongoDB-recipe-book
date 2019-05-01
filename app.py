@@ -7,20 +7,10 @@ from functools import wraps
 from werkzeug.datastructures import MultiDict
 from dotenv import load_dotenv
 import os
-# from flask_webpack import Webpack
 from Author import Author
 from forms import RegistrationForm, LoginForm, RecipeForm
 from webpackManifest import WebpackManifest
 
-# webpack = Webpack()
-"""
-params = {
-    'DEBUG': True,
-    'WEBPACK_MANIFEST_PATH': './static/manifest.json',
-    'WEBPACK_ASSETS_URL': '/static' 
-}
-
-"""
 
 load_dotenv()
 
@@ -28,8 +18,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')
 app.config["MONGO_URI"] = os.getenv('MONGO_URI')
 mongo = PyMongo(app)
-# app.config.update(params)
-# webpack.init_app(app)
+
 manifest_params = {
     'static_folder': '/static',
     'manifest_path': './static/manifest.json'
