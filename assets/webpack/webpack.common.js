@@ -3,6 +3,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
+const CopyGlobsPlugin = require('copy-globs-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -25,10 +26,16 @@ module.exports = {
                     name(module) {
                         // get the name. E.g. node_modules/packageName/not/this/part.js
                         // or node_modules/packageName
-                        const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+
+                        const match = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/);
+                        if (!!match) {
+                            const packageName = match[1];
+                            return `npm.${packageName.replace('@', '')}`;
+                        }
+                        //const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
 
                         // npm package names are URL-safe, but some servers don't like @ symbols
-                        return `npm.${packageName.replace('@', '')}`;
+                        // return `npm.${packageName.replace('@', '')}`;
                     },
                 },
             },
@@ -43,6 +50,7 @@ module.exports = {
         new CopyWebpackPlugin([
             {from: Path.resolve(__dirname, '../images'), to: '../static/images'}
         ]),
+
         new WebpackAssetsManifest()
     ],
     resolve: {
@@ -59,13 +67,14 @@ module.exports = {
             },
             {
                 test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+                include: Path.join(__dirname, '../../static'),
                 use: {
                     loader: 'file-loader',
                     options: {
                         name: '[path][name].[ext]'
                     }
                 }
-            },
+            }
         ]
     }
 };

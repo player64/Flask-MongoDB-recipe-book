@@ -40,8 +40,7 @@ class WebpackManifest:
     def manifest_css(self, args):
         if self.JsonExist and args in self.manifest:
             asset_path = '{}/{}'.format(self.staticFolder, self.manifest[args])
-            css = '<link rel="stylesheet" href="{0}">'.format(asset_path)
-            return css
+            return '<link rel="stylesheet" href="{0}">'.format(asset_path)
         else:
             return ''
 

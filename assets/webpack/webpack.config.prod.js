@@ -24,7 +24,7 @@ module.exports = merge(common, {
         }),
         new Webpack.optimize.ModuleConcatenationPlugin(),
         new MiniCssExtractPlugin({
-            filename: 'css/[name].[hash:8].css'
+            filename: '[name].[hash:8].css'
         })
     ],
     module: {
@@ -41,7 +41,18 @@ module.exports = merge(common, {
                     'css-loader',
                     'sass-loader'
                 ]
-            }
+            },
+            {
+                test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+                include: /node_modules/,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        outputPath: 'vendor/',
+                        name: '[name].[ext]'
+                    }
+                }
+            },
         ]
     }
 });

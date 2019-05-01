@@ -1,28 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Recipe book</title>
-    {{ manifest_css('app.css') | safe }}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recipe book</title>
+  {{ manifest_css('app.css') | safe }}
 </head>
 <body>
-    <header>
+{#<header class="topHeader">
+    <div class="container">
+        <a href="{{ url_for('index') }}" class="appBrand">
+            Awesome recipes
+        </a>
         {% if user.id and user.username %}
-            hello, <a href="{{ url_for('user', user_id=user.id) }}"> {{ user.username[0]|upper }}{{ user.username[1:] }}</a>
+            hello,
+            <a href="{{ url_for('user', user_id=user.id) }}"> {{ user.username[0]|upper }}{{ user.username[1:] }}</a>
             <a href="{{ url_for('logout') }}">Logout</a>
         {% endif %}
-    </header>
-    <div class="container">
-        {% block title %}
-        {% endblock %}
-        {% block content %}
-        {% endblock %}
     </div>
-    {{ manifest_js('npm.style-loader.js') | safe }}
-    {{ manifest_js('runtime.js') | safe }}
-    {{ manifest_js('npm.jquery.js') | safe }}
-    {{ manifest_js('npm.materialize-css.js') | safe }}
-    {{ manifest_js('app.js') | safe }}
+</header>#}
+<header class="topHeader">
+  <nav>
+    <div class="nav-wrapper">
+      <a href="{{ url_for('index') }}" class="brand-logo">Awesome recipes</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        {% if user.id and user.username %}
+          <li>
+            <a href="{{ url_for('user', user_id=user.id) }}">
+              Hello, {{ user.username[0]|upper }}{{ user.username[1:] }}
+            </a>
+          </li>
+          <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        {% endif %}
+        <li>
+          <a href="{{ url_for('new_recipe') }}" class="waves-effect waves-light btn">
+            Button  <i class="material-icons right">cloud</i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+<div class="container">
+  {% block title %}
+  {% endblock %}
+  {% block content %}
+  {% endblock %}
+</div>
+{{ manifest_js('npm.style-loader.js') | safe }}
+{{ manifest_js('runtime.js') | safe }}
+{{ manifest_js('npm.jquery.js') | safe }}
+{{ manifest_js('npm.material-icons.js') | safe }}
+{{ manifest_js('npm.materialize-css.js') | safe }}
+{{ manifest_js('app.js') | safe }}
 </body>
 </html>

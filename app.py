@@ -11,6 +11,7 @@ from Author import Author
 from forms import RegistrationForm, LoginForm, RecipeForm
 from webpackManifest import WebpackManifest
 
+# wireframe -> https://xd.adobe.com/spec/3363e2bb-a0eb-4512-659b-50443e231490-4552/
 
 load_dotenv()
 
