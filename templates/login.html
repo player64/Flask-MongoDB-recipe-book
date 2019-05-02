@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}
     <div class="row">
-        <h1 class="col s6 offset-s3">Login</h1>
+        <h3 class="col s12 m6 offset-m3">Login</h3>
     </div>
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col s8 offset-s2 m6 offset-m3">
+        <div class="col s12 m6 offset-m3">
             {% include '_messages.html' %}
             <form action="{{ url_for('login') }}" method="post">
                 {% from "_formhelpers.html" import render_field %}
@@ -14,7 +14,7 @@
                     {{ render_field(form.username, 's12') }}
                     {{ render_field(form.password, 's12') }}
                     <div class="col s12">
-                        <button class="waves-effect waves-light btn-large" type="submit">Login</button>
+                        <button class="waves-effect waves-light btn-large red darken-4" type="submit">Login</button>
                     </div>
                 </div>
             </form>

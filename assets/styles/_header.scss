@@ -42,7 +42,7 @@ header.topHeader {
   @media (max-width: 991px) {
     position: fixed;
     left: 0;
-    max-width: 50%;
+    max-width: 58%;
     width: 230px;
     top: $sm-header-height;
     background-color: $primary-color;
@@ -63,3 +63,13 @@ header.topHeader {
   }
 }
 
+// hide the navigation on specific pages
+body {
+  &.login,
+  &.register {
+    .navigation,
+    .menuOpener {
+      // display: none;
+    }
+  }
+}

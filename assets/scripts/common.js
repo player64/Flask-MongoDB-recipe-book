@@ -1,4 +1,5 @@
 'use strict';
+
 // mobile menu handler
 $('#menuOpener').click(() => {
     const _body = $('body');

@@ -32,3 +32,33 @@ body {
     padding-top: $lg-header-height;
   }
 }
+
+/*
+<ul class="flashes">
+
+                <li class="success">Successfully logged in</li>
+
+        </ul>
+
+*/
+
+ul.flashes {
+  li {
+    padding: 0.5rem 1rem;
+    color: #fff;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+
+    &.success {
+      background-color: color('light-green', 'darken-1');
+    }
+
+    &.error {
+      background-color: color('red', 'darken-1');
+    }
+  }
+}
+
+main.content {
+  padding-top: 2rem;
+}

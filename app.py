@@ -38,6 +38,12 @@ def requires_auth(f):
     return decorated
 
 
+@app.template_filter()
+def capitalize(text):
+    """Convert a string to capitalize"""
+    return text[0].upper() + text[1:]
+
+
 """
 Create models
 """
@@ -45,14 +51,14 @@ authors = AuthorModel(mongo)
 
 
 @app.context_processor
-def inject_user():
+def inject_to_template():
+    """ Inject global data to templates """
     return dict(user=authors.logged_as())
 
 
 @app.route('/')
-@requires_auth
 def index():
-    return render_template('index.html')
+    return render_template('index.html', body_class='home')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -76,7 +82,7 @@ def login():
 
     if 'user' in session:
         session.pop('user', None)
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, body_class='login')
 
 
 @app.route('/logout')
@@ -107,12 +113,15 @@ def register():
         flash(u'You have been registered', 'success')
         return redirect(url_for('login'))
 
-    return render_template('register.html', form=form, title="Register")
+    return render_template('register.html', form=form, title="Register",  body_class='register')
 
 
 @app.route('/recipe/add', methods=['GET', 'POST'])
 @requires_auth
 def new_recipe():
+    # More complete example of FieldList with FormField
+    # https://gist.github.com/doobeh/5d0f965502b86fee80fe
+    # https://medium.com/python-pandemonium/never-write-for-loops-again-91a5a4c84baf
     data = MultiDict(
         [
             ('title', 'Ragu'),
@@ -127,7 +136,7 @@ def new_recipe():
     form = RecipeForm(data, request.form)
     if request.method == 'POST' and form.validate():
         return 'Post'
-    return render_template('recipe_edit.html', form=form, title='Add recipe')
+    return render_template('recipe_edit.html', form=form, title='Add recipe', body_class='new_recipe')
 
 
 @app.route('/user/<user_id>')

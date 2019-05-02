@@ -5,6 +5,8 @@ class DbModel:
     Mongo = None
     TableName = None
 
+    # https://docs.mongodb.com/manual/tutorial/query-arrays/
+
     def __init__(self, mongo, table_name):
         self.Mongo = mongo
         self.TableName = table_name

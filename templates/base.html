@@ -6,39 +6,16 @@
   <title>Recipe book</title>
   {{ manifest_css('app.css') | safe }}
 </head>
-<body>
-<header class="topHeader">
-  <nav>
-    <div class="nav-wrapper">
-      <a href="{{ url_for('index') }}" class="brand-logo">Awesome recipes</a>
-      <ul class="right navigation">
-        {% if user.id and user.username %}
-          <li>
-            <a href="{{ url_for('user', user_id=user.id) }}">
-              <i class="material-icons left">account_circle</i>
-              Hello, {{ user.username[0]|upper }}{{ user.username[1:] }}
-            </a>
-          </li>
-          <li><a href="{{ url_for('logout') }}">Logout</a></li>
-        {% endif %}
-        <li>
-          <a href="{{ url_for('new_recipe') }}" class="waves-effect waves-light btn red darken-4">
-            Add recipe <i class="material-icons right">add</i>
-          </a>
-        </li>
-      </ul>
-      <button id="menuOpener" class="left hide-on-large-only menuOpener">
-        <i class="material-icons">menu</i>
-      </button>
-    </div>
-  </nav>
-</header>
-<div class="container">
-  {% block title %}
-  {% endblock %}
-  {% block content %}
-  {% endblock %}
-</div>
+<body class="{{ body_class }}">
+{% include '_header.html' %}
+<main class="content">
+  <div class="container">
+    {% block title %}
+    {% endblock %}
+    {% block content %}
+    {% endblock %}
+  </div>
+</main>
 {{ manifest_js('npm.style-loader.js') | safe }}
 {{ manifest_js('runtime.js') | safe }}
 {{ manifest_js('npm.jquery.js') | safe }}
