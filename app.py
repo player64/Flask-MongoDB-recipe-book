@@ -137,7 +137,10 @@ def new_recipe():
     form = RecipeForm(data, request.form)
     if request.method == 'POST' and form.validate():
         return 'Post'
-    return render_template('recipe_edit.html', form=form, title='Add recipe', body_class='new_recipe')
+    return render_template('recipe_edit.html',
+                           form=form,
+                           title='Add recipe',
+                           body_class='edit_recipe')
 
 
 @app.route('/user/<user_id>')

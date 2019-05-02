@@ -31,6 +31,4 @@ class AuthorModel(DbModel):
         return 'user' in session and type(session['user']) is dict
 
     def logged_as(self):
-        if self.is_logged():
-            return session['user']
-        return False
+        return session['user'] if self.is_logged() else False

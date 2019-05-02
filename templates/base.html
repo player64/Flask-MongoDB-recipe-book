@@ -16,11 +16,21 @@
     {% endblock %}
   </div>
 </main>
+{#<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+
+#}
+
 {{ manifest_js('npm.style-loader.js') | safe }}
 {{ manifest_js('runtime.js') | safe }}
+{{ manifest_js('npm.core-js.js') | safe }}
 {{ manifest_js('npm.jquery.js') | safe }}
 {{ manifest_js('npm.material-icons.js') | safe }}
 {{ manifest_js('npm.materialize-css.js') | safe }}
+
 {{ manifest_js('app.js') | safe }}
+
 </body>
 </html>
