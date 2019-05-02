@@ -1,10 +1,9 @@
-from bson.objectid import ObjectId
 from flask import session
-from dbModel import DbModel
+from models.dbModel import DbModel
 from passlib.hash import sha256_crypt
 
 
-class Author(DbModel):
+class AuthorModel(DbModel):
     TableName = 'authors'
 
     def __init__(self, mongo):

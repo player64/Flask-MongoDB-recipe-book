@@ -7,18 +7,6 @@
   {{ manifest_css('app.css') | safe }}
 </head>
 <body>
-{#<header class="topHeader">
-    <div class="container">
-        <a href="{{ url_for('index') }}" class="appBrand">
-            Awesome recipes
-        </a>
-        {% if user.id and user.username %}
-            hello,
-            <a href="{{ url_for('user', user_id=user.id) }}"> {{ user.username[0]|upper }}{{ user.username[1:] }}</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
-        {% endif %}
-    </div>
-</header>#}
 <header class="topHeader">
   <nav>
     <div class="nav-wrapper">
@@ -27,17 +15,21 @@
         {% if user.id and user.username %}
           <li>
             <a href="{{ url_for('user', user_id=user.id) }}">
+              <i class="material-icons left">account_circle</i>
               Hello, {{ user.username[0]|upper }}{{ user.username[1:] }}
             </a>
           </li>
           <li><a href="{{ url_for('logout') }}">Logout</a></li>
         {% endif %}
         <li>
-          <a href="{{ url_for('new_recipe') }}" class="waves-effect waves-light btn">
-            Button  <i class="material-icons right">cloud</i>
+          <a href="{{ url_for('new_recipe') }}" class="waves-effect waves-light btn red darken-4">
+            Add recipe <i class="material-icons right">add</i>
           </a>
         </li>
       </ul>
+      <button class="left hide-on-large-only menuOpener">
+        <i class="material-icons">menu</i>
+      </button>
     </div>
   </nav>
 </header>

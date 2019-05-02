@@ -3,7 +3,6 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
-const CopyGlobsPlugin = require('copy-globs-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -48,7 +47,7 @@ module.exports = {
         }),
         new CleanWebpackPlugin(['static'], {root: Path.resolve(__dirname, '../..')}),
         new CopyWebpackPlugin([
-            {from: Path.resolve(__dirname, '../images'), to: '../static/images'}
+            {from: Path.resolve(__dirname, '../images'), to: '../../static/images'}
         ]),
 
         new WebpackAssetsManifest()
@@ -78,3 +77,5 @@ module.exports = {
         ]
     }
 };
+
+

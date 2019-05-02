@@ -13,7 +13,11 @@ header.topHeader {
 
     .brand-logo {
       color: #fff;
-      font-size: 1.2rem;
+      font-size: 1rem;
+
+      @media (min-width: 420px) {
+        font-size: 1.2rem;
+      }
 
       &:hover {
         color: color('green', 'lighten-5');
@@ -22,4 +26,18 @@ header.topHeader {
   }
 }
 
+.menuOpener {
+  padding: 0;
+  color: #fff;
+  background: none;
+  border: none;
+
+  &:focus {
+    background: none;
+  }
+}
+
+.navRolled {
+
+}
 

@@ -24,7 +24,7 @@ module.exports = merge(common, {
         }),
         new Webpack.optimize.ModuleConcatenationPlugin(),
         new MiniCssExtractPlugin({
-            filename: '[name].[hash:8].css'
+            filename: 'css/[name].[hash:8].css'
         })
     ],
     module: {
@@ -48,11 +48,12 @@ module.exports = merge(common, {
                 use: {
                     loader: 'file-loader',
                     options: {
+                        publicPath: '../vendor',
                         outputPath: 'vendor/',
                         name: '[name].[ext]'
                     }
                 }
-            },
+            }
         ]
     }
 });

@@ -70,6 +70,18 @@ module.exports = merge(common, {
                 ]*/
                 // include: Path.resolve(__dirname, '../../assets'),
                 use: ['style-loader', 'css-loader?sourceMap=true', 'sass-loader']
+            },
+            {
+                test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+                include: /node_modules/,
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        publicPath: 'http://localhost:3000/static/vendor/',
+                        outputPath: 'vendor/',
+                        name: '[name].[ext]'
+                    }
+                }
             }
         ]
     },

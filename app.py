@@ -7,7 +7,7 @@ from functools import wraps
 from werkzeug.datastructures import MultiDict
 from dotenv import load_dotenv
 import os
-from Author import Author
+from models.AuthorModel import AuthorModel
 from forms import RegistrationForm, LoginForm, RecipeForm
 from webpackManifest import WebpackManifest
 
@@ -31,7 +31,7 @@ manifest = WebpackManifest(app, manifest_params)
 def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if not Author.is_logged():
+        if not AuthorModel.is_logged():
             return redirect(url_for('login'))
         return f(*args, **kwargs)
 
@@ -41,7 +41,7 @@ def requires_auth(f):
 """
 Create models
 """
-authors = Author(mongo)
+authors = AuthorModel(mongo)
 
 
 @app.context_processor
