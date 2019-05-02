@@ -11,7 +11,7 @@
   <nav>
     <div class="nav-wrapper">
       <a href="{{ url_for('index') }}" class="brand-logo">Awesome recipes</a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <ul class="right navigation">
         {% if user.id and user.username %}
           <li>
             <a href="{{ url_for('user', user_id=user.id) }}">
@@ -27,7 +27,7 @@
           </a>
         </li>
       </ul>
-      <button class="left hide-on-large-only menuOpener">
+      <button id="menuOpener" class="left hide-on-large-only menuOpener">
         <i class="material-icons">menu</i>
       </button>
     </div>

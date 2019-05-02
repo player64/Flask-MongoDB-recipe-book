@@ -31,13 +31,35 @@ header.topHeader {
   color: #fff;
   background: none;
   border: none;
+  cursor: pointer;
 
   &:focus {
     background: none;
   }
 }
 
-.navRolled {
+.navigation {
+  @media (max-width: 991px) {
+    position: fixed;
+    left: 0;
+    max-width: 50%;
+    width: 230px;
+    top: $sm-header-height;
+    background-color: $primary-color;
+    height: calc(100% - #{$sm-header-height});
+    transition: transform 0.3s;
+    transform: translateX(-100%);
+    z-index: 11;
 
+    li {
+      float: none;
+    }
+  }
+}
+
+.navRolled {
+  .navigation {
+    transform: translateX(0);
+  }
 }
 

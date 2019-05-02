@@ -26,4 +26,9 @@
 
 body {
   background-color: $bg-colour;
+  padding-top: $sm-header-height;
+
+  @media (min-width: 600px) {
+    padding-top: $lg-header-height;
+  }
 }
