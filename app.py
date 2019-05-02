@@ -32,6 +32,7 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if not AuthorModel.is_logged():
+            flash('You need to login to continue', 'warning')
             return redirect(url_for('login'))
         return f(*args, **kwargs)
 

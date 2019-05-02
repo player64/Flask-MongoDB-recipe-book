@@ -56,6 +56,11 @@ ul.flashes {
     &.error {
       background-color: color('red', 'darken-1');
     }
+
+    &.warning {
+      background-color: color('yellow', 'base');
+      color: #000;
+    }
   }
 }
 
