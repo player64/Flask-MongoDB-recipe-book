@@ -1,0 +1,26 @@
+.sidebarField {
+  margin-bottom: 2rem;
+}
+
+.repeatField {
+  li {
+    position: relative;
+
+    .delete {
+      position: absolute;
+      right: 1%;
+      bottom: 20px;
+      padding: 0;
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+
+      i {
+        font-size: 14px;
+      }
+    }
+  }
+}

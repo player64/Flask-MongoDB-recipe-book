@@ -34,7 +34,7 @@ class RecipeForm(Form):
     title = StringField('Title', [validators.DataRequired()])
     introduction = TextAreaField('Introduction')
     method = FieldList(TextAreaField('Method'), min_entries=1)
-    ingredients = FieldList(HiddenField('Ingredients'), validators=[validators.DataRequired()], min_entries=1)
+    ingredients = FieldList(StringField('Ingredient'), validators=[validators.DataRequired()], min_entries=1)
     categories = FieldList(HiddenField('Categories'), validators=[validators.DataRequired()], min_entries=1)
     cuisines = FieldList(HiddenField('Cuisines'), validators=[validators.DataRequired()], min_entries=1)
     allergens = FieldList(HiddenField('Allergens'), validators=[validators.DataRequired()], min_entries=1)

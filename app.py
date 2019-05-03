@@ -131,14 +131,18 @@ def new_recipe():
             ('method-1', 'Add some'),
             ('method-2', 'Add two'),
             ('categories-0', 'Bake'),
-            ('categories-1', 'Chicken')
+            ('categories-1', 'Chicken'),
+            ('cuisines-1', 'French')
         ]
     )
-    form = RecipeForm(data, request.form)
-    if request.method == 'POST' and form.validate():
-        return 'Post'
+    init_form = RecipeForm(data, request.form)
+    if request.method == 'POST':
+        edited_form = RecipeForm(request.form)
+        if edited_form.validate():
+            print(edited_form.categories.data)
+            return 'Post'
     return render_template('recipe_edit.html',
-                           form=form,
+                           form=init_form,
                            title='Add recipe',
                            body_class='edit_recipe')
 
