@@ -8,6 +8,8 @@ from werkzeug.datastructures import MultiDict
 from dotenv import load_dotenv
 import os
 from models.AuthorModel import AuthorModel
+from models.RecipeModel import RecipeModel
+from models.CategoryModel import CategoryModel
 from forms import RegistrationForm, LoginForm, RecipeForm
 from webpackManifest import WebpackManifest
 
@@ -48,13 +50,16 @@ def capitalize(text):
 """
 Create models
 """
-authors = AuthorModel(mongo)
+author_model = AuthorModel(mongo)
+recipe_model = RecipeModel(mongo)
+cuisine_model = CategoryModel(mongo, 'cuisines')
+category_model = CategoryModel(mongo, 'categories')
 
 
 @app.context_processor
 def inject_to_template():
     """ Inject global data to templates """
-    return dict(user=authors.logged_as())
+    return dict(user=author_model.logged_as())
 
 
 @app.route('/')
@@ -64,12 +69,12 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    global authors
+    global author_model
     # MultiDict([('username', 'mariusz')])
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
 
-        author = authors.authenticate(request.form.to_dict())
+        author = author_model.authenticate(request.form.to_dict())
         if author is not False:
             session['user'] = {
                 'id': str(ObjectId(author['_id'])),
@@ -98,11 +103,11 @@ def register():
     Method is used for register user
     :return: template register or redirect to login
     """
-    global authors
+    global author_model
     form = RegistrationForm(request.form)
     if request.method == 'POST' and form.validate():
         username = request.form.get('username')
-        if authors.get_by_username(username):
+        if author_model.get_by_username(username):
             flash(u'Username {} is already registered'.format(username), 'error')
             return redirect(url_for('register'))
         data = {
@@ -110,11 +115,11 @@ def register():
             'password': sha256_crypt.encrypt(request.form.get('password')),
             'registered': datetime.now(),
         }
-        authors.register(data)
+        author_model.register(data)
         flash(u'You have been registered', 'success')
         return redirect(url_for('login'))
 
-    return render_template('register.html', form=form, title="Register",  body_class='register')
+    return render_template('register.html', form=form, title="Register", body_class='register')
 
 
 @app.route('/recipe/add', methods=['GET', 'POST'])
@@ -123,7 +128,8 @@ def new_recipe():
     # More complete example of FieldList with FormField
     # https://gist.github.com/doobeh/5d0f965502b86fee80fe
     # https://medium.com/python-pandemonium/never-write-for-loops-again-91a5a4c84baf
-    data = MultiDict(
+    """
+        data = MultiDict(
         [
             ('title', 'Ragu'),
             ('introduction', 'some'),
@@ -136,20 +142,22 @@ def new_recipe():
         ]
     )
     init_form = RecipeForm(data, request.form)
-    if request.method == 'POST':
-        edited_form = RecipeForm(request.form)
-        if edited_form.validate():
-            print(edited_form.categories.data)
-            return 'Post'
+    :return:
+    """
+
+    form = RecipeForm(request.form)
+    if request.method == 'POST' and form.validate():
+        recipe_model.add(form, session['user']['username'])
+        return 'POST'
     return render_template('recipe_edit.html',
-                           form=init_form,
+                           form=form,
                            title='Add recipe',
                            body_class='edit_recipe')
 
 
 @app.route('/user/<user_id>')
 def user(user_id):
-    user_db = authors.get_one_by_id(ObjectId(user_id))
+    user_db = author_model.get_one_by_id(ObjectId(user_id))
     return render_template('user.html', user_db=user_db)
 
 

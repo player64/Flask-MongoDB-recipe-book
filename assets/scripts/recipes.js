@@ -214,8 +214,8 @@ function deleteField(button) {
     updateFieldsAttr(selector);
 
     /*
-    * this one is a tweak to prevent  multiple deletion caused by
-    * multiple instance of click button.delete
+    * setTimeout is a tweak to prevent multiple deletion caused by
+    * multiple instance of $('button.delete').click()
     * one on document load
     * second after new field creation
     */

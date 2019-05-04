@@ -10,7 +10,6 @@
             <form action="{{ url_for('new_recipe') }}" method="post">
                 <div class="row">
                     <div class="col m7">
-
                         <div class="row">
                             {{ render_field(form.title, 's12') }}
                             {{ render_field(form.introduction, 's12', class='materialize-textarea') }}
@@ -60,20 +59,13 @@
                             <input class="input" placeholder="Enter allergen">
                         </div>
                     </div>
-
                     <div class="col s12 center-align">
                         <button class="waves-effect waves-light btn-large red darken-4" type="submit">
                             {{ title }}
                         </button>
                     </div>
-
                 </div>
             </form>
         </div>
     </div>
-
-
-
-
-
 {% endblock %}

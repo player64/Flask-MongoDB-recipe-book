@@ -14,7 +14,7 @@ class AuthorModel(DbModel):
         return self.get_one_by_attr('username', username)
 
     def register(self, data: dict):
-        self.Mongo.db[self.TableName].insert_one(data)
+        self.db.insert_one(data)
 
     def authenticate(self, data: dict):
         user = self.get_by_username(data['username'])
