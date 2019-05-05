@@ -12,11 +12,25 @@ class RecipeModel(DbModel):
         self.Cuisines = CategoryModel(mongo, 'cuisines')
 
     def add(self, data, author):
-        recipe = self.create_save_data(data, author, True)
+        # recipe = self.create_save_data(data, author, True)
+        categories = self.Categories.add(data.categories.data)
+        cuisines = self.Cuisines.add(data.cuisines.data)
+        recipe = {
+            'title': data.title.data,
+            'introduction': data.introduction.data,
+            'method': data.method.data,
+            'ingredients': data.ingredients.data,
+            'allergens': list(x.lower() for x in data.allergens.data),
+            'categories': categories,
+            'cuisines': cuisines,
+            'author': author,
+            'views': 0,
+            'likes': 0,
+            'edited': datetime.now(),
+            'created': datetime.now()
+        }
+
         id = self.db.insert_one(recipe)
-        print(data.categories.data)
-        self.Categories.add(data.categories.data)
-        self.Cuisines.add(data.cuisines.data)
         return id.inserted_id
 
     @staticmethod
