@@ -1,0 +1,30 @@
+{% macro recipe_card(recipe, single_class) %}
+    <div class="col {{ single_class }}">
+        <article class="recipe_card">
+            <a href="{{ url_for('view_recipe', recipe_id=recipe._id) }}">
+                <h5 class="card_title">{{ recipe.title }}</h5>
+            </a>
+            {% if recipe.introduction %}
+                <p>{{ string_limit(recipe.introduction, 30) }}</p>
+            {% endif %}
+            <div class="row">
+                <div class="col s6 l4">
+                    <i class="material-icons left">account_circle</i>
+                    <a href="{{ url_for('index', author_name=recipe.author) }}">
+                        {{ recipe.author|capitalize }}
+                    </a>
+                </div>
+                <div class="col s6 l4">
+                    <i class="material-icons left">visibility</i>
+                    {{ recipe.views }} views
+                </div>
+                <div class="col s6 l4">
+                    <i class="material-icons left">thumb_up</i>
+                    {{ recipe.thumb_up }} {{ recipe.likes }} likes
+                </div>
+            </div>
+            <a href="{{ url_for('view_recipe', recipe_id=recipe._id) }}"
+               class="waves-effect waves-light btn red darken-4">View recipe</a>
+        </article>
+    </div>
+{% endmacro %}

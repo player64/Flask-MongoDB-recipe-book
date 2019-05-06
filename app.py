@@ -47,6 +47,41 @@ def capitalize(text):
     return text[0].upper() + text[1:]
 
 
+@app.template_filter()
+def truncate_text(text):
+    return text[:120] + '...' if len(text) >= 120 else text
+
+
+@app.context_processor
+def template_functions():
+    def string_limit(text, limit):
+        short_text = text.split(' ')[:limit]
+        str = '...' if len(short_text) >= limit else ''
+        return ' '.join(short_text) + str
+
+    def pagination_url(type, attr, page_no, order, total_pages=None):
+        paginate = page_no
+
+        if type == 'prev':
+            if page_no == 1:
+                return '#'
+            paginate = page_no - 1
+        elif type == 'next':
+            if total_pages == page_no:
+                return '#'
+            paginate = page_no + 1
+
+        if attr['name'] == 'author':
+            return url_for('index', page_no=paginate, order_by=order, author_name=attr['author'])
+        elif attr['name'] == 'tag':
+            return url_for('index', page_no=paginate, order_by=order,
+                           tag_name=attr['tag']['name'], tag_value=attr['tag']['value'])
+        else:
+            return url_for('index', page_no=paginate, order_by=order)
+
+    return dict(string_limit=string_limit, pagination_url=pagination_url)
+
+
 """
 Create models
 """
@@ -62,9 +97,59 @@ def inject_to_template():
     return dict(user=author_model.logged_as())
 
 
+@app.route('/author/<author_name>/page/<page_no>')
+@app.route('/author/<author_name>/page/<page_no>/order-by/<order_by>')
+@app.route('/author/<author_name>/order-by/<order_by>')
+@app.route('/author/<author_name>')
+@app.route('/tag/<tag_name>/<tag_value>/page/<page_no>')
+@app.route('/tag/<tag_name>/<tag_value>/page/<page_no>/order-by/<order_by>')
+@app.route('/tag/<tag_name>/<tag_value>/order-by/<order_by>')
+@app.route('/tag/<tag_name>/<tag_value>/')
+@app.route('/page/<page_no>')
+@app.route('/page/<page_no>/order-by/<order_by>')
+@app.route('/order-by/<order_by>')
 @app.route('/')
-def index():
-    return render_template('index.html', body_class='home')
+def index(page_no=None, order_by=None, author_name=None, tag_name=None, tag_value=None):
+    if not page_no:
+        page_no = 1
+    else:
+        page_no = int(page_no)
+
+    if not order_by:
+        order_by = 'created'
+
+    query = {}
+    if author_name is not None:
+        page_attr = {
+            'name': 'author',
+            'author': author_name,
+            'link': '/author/'+author_name
+        }
+        query = {'author': author_name}
+    elif tag_name is not None and tag_value is not None:
+        page_attr = {
+            'name': 'tag',
+            'tag': {
+                'name': tag_name,
+                'value': tag_value
+            },
+            'link': '/tag/' + tag_name + '/' + tag_value
+        }
+        query = {tag_name: {'$in': [tag_value]}}
+    else:
+        page_attr = {
+            'name': 'index',
+            'link': ''
+        }
+
+    recipes = recipe_model.get_archive(query, page_no, order_by)
+    return render_template('index.html',
+                           body_class='archive',
+                           page_attr=page_attr,
+                           recipes=recipes,
+                           page=page_no,
+                           order_by=order_by,
+                           pagination=recipe_model.archive_pagination(query))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -155,15 +240,16 @@ def new_recipe():
                            body_class='edit_recipe')
 
 
+@app.route('/recipe/<recipe_id>')
+def view_recipe(recipe_id):
+    return recipe_id
+
+
 @app.route('/user/<user_id>')
 def user(user_id):
     user_db = author_model.get_one_by_id(ObjectId(user_id))
     return render_template('user.html', user_db=user_db)
 
-
-@app.route('/test/<name>')
-def test(name):
-    return name
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

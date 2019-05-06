@@ -1,0 +1,31 @@
+.recipeArchive {
+  &.flexPos {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  & > .col {
+    margin-bottom: 1.5rem;
+    float: none;
+  }
+}
+
+.recipe_card {
+  padding: 30px;
+  background-color: #fff;
+  height: 100%;
+
+  .card_title {
+    margin-top: 0;
+    padding-top: 0;
+    text-transform: uppercase;
+    line-height: 135%;
+    font-size: 1.3rem;
+  }
+
+  a {
+    .card_title {
+      color: $primary-color;
+    }
+  }
+}

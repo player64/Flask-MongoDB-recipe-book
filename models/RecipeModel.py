@@ -1,10 +1,12 @@
 from datetime import datetime
 from models.dbModel import DbModel
 from models.CategoryModel import CategoryModel
+import math
 
 
 class RecipeModel(DbModel):
     TableName = 'recipes'
+    RecipeNoArchive = 3
 
     def __init__(self, mongo):
         super().__init__(mongo, self.TableName)
@@ -13,16 +15,16 @@ class RecipeModel(DbModel):
 
     def add(self, data, author):
         # recipe = self.create_save_data(data, author, True)
-        categories = self.Categories.add(data.categories.data)
-        cuisines = self.Cuisines.add(data.cuisines.data)
+        # categories = self.Categories.add(data.categories.data)
+        # cuisines = self.Cuisines.add(data.cuisines.data)
         recipe = {
             'title': data.title.data,
             'introduction': data.introduction.data,
             'method': data.method.data,
             'ingredients': data.ingredients.data,
-            'allergens': list(x.lower() for x in data.allergens.data),
-            'categories': categories,
-            'cuisines': cuisines,
+            'allergens': self.list_to_lower(data.allergens.data),
+            'categories': self.list_to_lower(data.categories.data),
+            'cuisines': self.list_to_lower(data.cuisines.data),
             'author': author,
             'views': 0,
             'likes': 0,
@@ -32,6 +34,20 @@ class RecipeModel(DbModel):
 
         id = self.db.insert_one(recipe)
         return id.inserted_id
+
+    def get_archive(self, query, page_no, order_by):
+        skip_posts = 0 if page_no == 1 else page_no
+
+        return self.db.find({'$query': query, '$orderby': {order_by: -1}}).skip(self.RecipeNoArchive * skip_posts).limit(
+                self.RecipeNoArchive)
+
+    def archive_pagination(self, query):
+        return math.floor(self.db.find(query).count() / self.RecipeNoArchive)
+
+
+    @staticmethod
+    def list_to_lower(data):
+        return [x.lower() for x in data]
 
     @staticmethod
     def create_save_data(data, author, new_data):

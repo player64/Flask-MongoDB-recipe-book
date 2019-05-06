@@ -42,15 +42,3 @@ class DbModel:
                 counter_name: updated_value
             }}
         )
-
-    """
-    PAGINATION
-    // Page 1
-    db.students.find().limit(5)
-
-    // Page 2
-    db.students.find().skip(5).limit(5)
-
-    // Page 3
-    db.students.find().skip(5).limit(5
-    """
