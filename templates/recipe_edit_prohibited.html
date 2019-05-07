@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="center-align alerts">
+        <p class="error">You can't edit someone recipe</p>
+        <a href="{{ url_for('index') }}" class="waves-effect waves-light btn">Go to home page</a>
+    </div>
+{% endblock %}

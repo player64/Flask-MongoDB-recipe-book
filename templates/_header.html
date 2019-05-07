@@ -5,7 +5,7 @@
       <ul class="right navigation">
         {% if user.id and user.username %}
           <li>
-            <a href="{{ url_for('user', user_id=user.id) }}">
+            <a href="{{ url_for('index', author_name=user.username) }}">
               <i class="material-icons left">account_circle</i>
               Hello, {{ user.username|capitalize }}
             </a>

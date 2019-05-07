@@ -4,7 +4,6 @@ from passlib.hash import sha256_crypt
 from datetime import datetime
 from bson.objectid import ObjectId, InvalidId
 from functools import wraps
-from werkzeug.datastructures import MultiDict
 from dotenv import load_dotenv
 import json
 import os
@@ -255,26 +254,6 @@ def register():
 @app.route('/recipe/add', methods=['GET', 'POST'])
 @requires_auth
 def new_recipe():
-    # More complete example of FieldList with FormField
-    # https://gist.github.com/doobeh/5d0f965502b86fee80fe
-    # https://medium.com/python-pandemonium/never-write-for-loops-again-91a5a4c84baf
-    """
-        data = MultiDict(
-        [
-            ('title', 'Ragu'),
-            ('introduction', 'some'),
-            ('method-0', 'Add some'),
-            ('method-1', 'Add some'),
-            ('method-2', 'Add two'),
-            ('categories-0', 'Bake'),
-            ('categories-1', 'Chicken'),
-            ('cuisines-1', 'French')
-        ]
-    )
-    init_form = RecipeForm(data, request.form)
-    :return:
-    """
-
     form = RecipeForm(request.form)
     if request.method == 'POST' and form.validate():
         recipe_model.add(form, session['user']['username'])
@@ -288,7 +267,20 @@ def new_recipe():
 @app.route('/recipe/edit/<recipe_id>', methods=['GET', 'POST'])
 @requires_auth
 def edit_recipe(recipe_id):
-    return True
+    if ObjectId.is_valid(recipe_id):
+        recipe = recipe_model.edit_get(ObjectId(recipe_id), session['user']['username'])
+        if recipe is False:
+            return redirect(url_for('edit_recipe_prohibited'))
+        init_form = RecipeForm(recipe, request.form)
+        return render_template('recipe_edit.html',
+                               form=init_form,
+                               title='Edit recipe',
+                               body_class='edit_recipe')
+
+
+@app.route('/recipe/edit/prohibited')
+def edit_recipe_prohibited():
+    return render_template('recipe_edit_prohibited.html')
 
 
 @app.route('/recipe/<recipe_id>')
@@ -299,11 +291,13 @@ def view_recipe(recipe_id):
     if 'recipe_views' not in session:
         session['recipe_views'] = []
 
-    if ObjectId.is_valid(recipe_id) and str(recipe_id) not in session['recipe_views']:
-        session['recipe_views'].append(str(recipe_id))
+    if ObjectId.is_valid(recipe_id) and recipe_id not in session['recipe_views']:
+        session['recipe_views'].append(recipe_id)
         recipe_model.update_view_counter(ObjectId(recipe_id))
+        session.modified = True
 
-    recipe = related = False
+    recipe = False
+    related = []
 
     if ObjectId.is_valid(recipe_id):
         recipe = recipe_model.view(ObjectId(recipe_id))

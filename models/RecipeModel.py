@@ -1,6 +1,7 @@
 from datetime import datetime
 from models.dbModel import DbModel
 import math
+from werkzeug.datastructures import MultiDict
 
 
 class RecipeModel(DbModel):
@@ -35,8 +36,8 @@ class RecipeModel(DbModel):
     def get_archive(self, query, page_no, order_by):
         page_no -= 1
 
-        return self.db.find({'$query': query, '$orderby': {order_by: -1}})\
-            .skip(self.RecipeNoArchive * page_no)\
+        return self.db.find({'$query': query, '$orderby': {order_by: -1}}) \
+            .skip(self.RecipeNoArchive * page_no) \
             .limit(self.RecipeNoArchive)
 
     def archive_pagination(self, query):
@@ -53,12 +54,42 @@ class RecipeModel(DbModel):
             }}
         )
 
+    def edit_get(self, recipe_id, username):
+        recipe = self.get_one_by_id(recipe_id)
+        if recipe:
+            if recipe['author'] != username:
+                return False
+
+            editable_keys = [
+                'title',
+                'introduction',
+                'method',
+                'ingredients',
+                'categories',
+                'cuisines',
+                'allergens'
+            ]
+
+            editable = []
+            for key in recipe.keys():
+                if key in editable_keys:
+                    if isinstance(recipe[key], list):
+                        c = 0
+                        for item in recipe[key]:
+                            editable.append(('{}-{}'.format(key, c), item))
+                            c += 1
+                    else:
+                        editable.append((key, recipe[key]))
+            return MultiDict(editable)
+
     def related(self, exclude, categories):
         limit = 6
         related = []
         for category in categories:
-            recipes = list(self.db.find({'$query': {'categories': {'$in': [category]}}, '$orderby': {'views': -1}})\
-                .limit(limit))
+            recipes = list(self.db.find(
+                {'$query': {
+                    'categories': {'$in': [category]}},
+                    '$orderby': {'views': -1}}).limit(limit))
 
             limit -= len(related)
             for recipe in recipes:

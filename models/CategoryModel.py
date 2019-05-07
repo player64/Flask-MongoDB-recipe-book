@@ -37,17 +37,3 @@ class CategoryModel(DbModel):
     def get_names(self):
         collection = self.get_all()
         return [item['name'] for item in collection]
-
-
-"""
-mongo.categories.find({'$query': {}, '$orderby': {'recipes_no': -1}}).limit(25).skip(5)
-"""
-"""
-new_categories.append({
-    'name': cat_name,
-    'recipes_no': 1
-})
-"""
-
-# if len(new_categories):
-#    self.db.insert_many(new_categories)
