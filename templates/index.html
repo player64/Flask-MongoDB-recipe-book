@@ -3,45 +3,57 @@
 {% block content %}
     {% include '_messages.html' %}
     <div class="row">
-        <div class="input-field col s8 m3">
-            <select id="orderBy">
-                <option value="{{ page_attr.link }}/page/{{ page }}"
-                        {% if order_by == 'created' %}selected{% endif %}>Latest
-                </option>
-                <option value="{{ page_attr.link }}/page/{{ page }}/order-by/views"
-                        {% if order_by == 'views' %}selected{% endif %}>Most popular
-                </option>
-                <option value="{{ page_attr.link }}/page/{{ page }}/order-by/likes"
-                        {% if order_by == 'likes' %}selected{% endif %}>Most like
-                </option>
-            </select>
-            <label>Order by</label>
+        <h1 class="archive_title col m8">{{ title }}</h1>
+        <div class="col m4 right">
+        {% if recipes|length %}
+            <div class="input-field">
+                <select id="orderBy">
+                    <option value="{{ page_attr.link }}/page/{{ page }}"
+                            {% if order_by == 'created' %}selected{% endif %}>Latest
+                    </option>
+                    <option value="{{ page_attr.link }}/page/{{ page }}/order-by/views"
+                            {% if order_by == 'views' %}selected{% endif %}>Most popular
+                    </option>
+                    <option value="{{ page_attr.link }}/page/{{ page }}/order-by/likes"
+                            {% if order_by == 'likes' %}selected{% endif %}>Most likes
+                    </option>
+                </select>
+                <label>Order by</label>
+            </div>
         </div>
+        {% endif %}
     </div>
 
-    <div class="row recipeArchive flexPos threeColumn">
-        {% from "_recipe_card.html" import recipe_card with context %}
-        {% for recipe in recipes %}
-            {{ recipe_card(recipe, 'm6 xl4') }}
-        {% endfor %}
-    </div>
-    {% if pagination > 1 %}
-        <ul class="pagination">
-            <li {% if page == 1 %}class="disabled"{% endif %}>
-                <a href="{{ pagination_url('prev',page_attr, page, order_by ) }}">
-                    <i class="material-icons">chevron_left</i>
-                </a>
-            </li>
-            {% for p in range(1, pagination + 1) %}
-                <li {% if p == page %}class="active"{% endif %}>
-                    <a href="{{ pagination_url('',page_attr, p, order_by ) }}">{{ p }}</a>
-                </li>
+    {% if recipes|length %}
+        <div class="row recipeArchive flexPos threeColumn">
+            {% from "_recipe_card.html" import recipe_card with context %}
+            {% for recipe in recipes %}
+                {{ recipe_card(recipe, 'm6 xl4') }}
             {% endfor %}
-            <li {% if page == pagination %}class="disabled"{% endif %}>
-                <a href="{{ pagination_url('next', page_attr, page, order_by, pagination ) }}">
-                    <i class="material-icons">chevron_right</i>
-                </a>
-            </li>
-        </ul>
+        </div>
+        {% if pagination > 1 %}
+            <ul class="pagination">
+                <li {% if page == 1 %}class="disabled"{% endif %}>
+                    <a href="{{ pagination_url('prev',page_attr, page, order_by ) }}">
+                        <i class="material-icons">chevron_left</i>
+                    </a>
+                </li>
+                {% for p in range(1, pagination + 1) %}
+                    <li {% if p == page %}class="active"{% endif %}>
+                        <a href="{{ pagination_url('',page_attr, p, order_by ) }}">{{ p }}</a>
+                    </li>
+                {% endfor %}
+                <li {% if page >= pagination %}class="disabled"{% endif %}>
+                    <a href="{{ pagination_url('next', page_attr, page, order_by, pagination ) }}">
+                        <i class="material-icons">chevron_right</i>
+                    </a>
+                </li>
+            </ul>
+        {% endif %}
+    {% else %}
+        <div class="center-align alerts">
+            <p class="warning">Any recipes found on selected criteria.</p>
+            <a href="{{ url_for('index') }}" class="waves-effect waves-light btn red darken-4">Go to home page</a>
+        </div>
     {% endif %}
 {% endblock %}

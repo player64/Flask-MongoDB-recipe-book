@@ -33,35 +33,34 @@ body {
   }
 }
 
-/*
-<ul class="flashes">
-
-                <li class="success">Successfully logged in</li>
-
-        </ul>
-
-*/
-
 ul.flashes {
   li {
     padding: 0.5rem 1rem;
     color: #fff;
     border-radius: 5px;
     margin-bottom: 0.5rem;
-
-    &.success {
-      background-color: color('light-green', 'darken-1');
-    }
-
-    &.error {
-      background-color: color('red', 'darken-1');
-    }
-
-    &.warning {
-      background-color: color('yellow', 'base');
-      color: #000;
-    }
   }
+}
+
+.alerts {
+  & > *:not(.btn) {
+    padding: 0.5rem 1rem;
+    color: #fff;
+    border-radius: 5px;
+  }
+}
+
+.success {
+  background-color: color('light-green', 'darken-1');
+}
+
+.error {
+  background-color: color('red', 'darken-1');
+}
+
+.warning {
+  background-color: color('yellow', 'base');
+  color: #000 !important;
 }
 
 main.content {

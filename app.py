@@ -1,11 +1,12 @@
-from flask import Flask, session, request, render_template, redirect, url_for, flash
+from flask import Flask, session, request, render_template, redirect, url_for, flash, Response, jsonify
 from flask_pymongo import PyMongo
 from passlib.hash import sha256_crypt
 from datetime import datetime
-from bson.objectid import ObjectId
+from bson.objectid import ObjectId, InvalidId
 from functools import wraps
 from werkzeug.datastructures import MultiDict
 from dotenv import load_dotenv
+import json
 import os
 from models.AuthorModel import AuthorModel
 from models.RecipeModel import RecipeModel
@@ -41,6 +42,17 @@ def requires_auth(f):
     return decorated
 
 
+def returns_json(f):
+    """
+    Decorator returns json content-type in the header used for API endpoint
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        r = f(*args, **kwargs)
+        return Response(r, content_type='application/json; charset=utf-8')
+    return decorated_function
+
+
 @app.template_filter()
 def capitalize(text):
     """Convert a string to capitalize"""
@@ -59,31 +71,44 @@ def template_functions():
         str = '...' if len(short_text) >= limit else ''
         return ' '.join(short_text) + str
 
-    def pagination_url(type, attr, page_no, order, total_pages=None):
+    def pagination_url(link_type, attr, page_no, order, total_pages=None):
         paginate = page_no
 
-        if type == 'prev':
-            if page_no == 1:
+        if link_type == 'prev':
+            if page_no <= 1:
                 return '#'
-            paginate = page_no - 1
-        elif type == 'next':
-            if total_pages == page_no:
+            paginate -= 1
+        elif link_type == 'next':
+            if total_pages <= page_no:
                 return '#'
-            paginate = page_no + 1
+            paginate += 1
 
         if attr['name'] == 'author':
             return url_for('index', page_no=paginate, order_by=order, author_name=attr['author'])
         elif attr['name'] == 'tag':
             return url_for('index', page_no=paginate, order_by=order,
                            tag_name=attr['tag']['name'], tag_value=attr['tag']['value'])
-        else:
-            return url_for('index', page_no=paginate, order_by=order)
 
-    return dict(string_limit=string_limit, pagination_url=pagination_url)
+        return url_for('index', page_no=paginate, order_by=order)
+
+    def recipe_vote_class(recipe):
+        if 'user' not in session:
+            return ''
+
+        if session['user']['username'] == recipe['author']:
+            return 'disabled'
+
+        if 'liked_by' in recipe and \
+                recipe['liked_by'] is not None and \
+                session['user']['username'] in recipe['liked_by']:
+            return 'voted'
+        return ''
+
+    return dict(string_limit=string_limit, pagination_url=pagination_url, recipe_vote_class=recipe_vote_class)
 
 
 """
-Create models
+Initialize models
 """
 author_model = AuthorModel(mongo)
 recipe_model = RecipeModel(mongo)
@@ -114,11 +139,18 @@ def index(page_no=None, order_by=None, author_name=None, tag_name=None, tag_valu
         page_no = 1
     else:
         page_no = int(page_no)
+        # check if page_no is greater than 0
+        page_no = page_no if page_no > 0 else 1
 
     if not order_by:
         order_by = 'created'
 
     query = {}
+    page_attr = {
+        'name': 'index',
+        'link': ''
+    }
+    title = ''
     if author_name is not None:
         page_attr = {
             'name': 'author',
@@ -126,6 +158,8 @@ def index(page_no=None, order_by=None, author_name=None, tag_name=None, tag_valu
             'link': '/author/'+author_name
         }
         query = {'author': author_name}
+
+        title += capitalize(author_name)+'\'s'
     elif tag_name is not None and tag_value is not None:
         page_attr = {
             'name': 'tag',
@@ -136,17 +170,29 @@ def index(page_no=None, order_by=None, author_name=None, tag_name=None, tag_valu
             'link': '/tag/' + tag_name + '/' + tag_value
         }
         query = {tag_name: {'$in': [tag_value]}}
+
+        if tag_name == 'categories':
+            title = 'Category '
+        elif tag_name == 'cuisines':
+            title = 'Cuisines '
+
+        title += capitalize(tag_value)
+
+    title += ' - ' if title is not '' else ''
+
+    if order_by == 'views':
+        title += 'Most popular recipes'
+    elif order_by == 'likes':
+        title += 'Most likes recipes'
     else:
-        page_attr = {
-            'name': 'index',
-            'link': ''
-        }
+        title += 'Most recent recipes'
 
     recipes = recipe_model.get_archive(query, page_no, order_by)
     return render_template('index.html',
                            body_class='archive',
                            page_attr=page_attr,
-                           recipes=recipes,
+                           recipes=list(recipes),
+                           title=title,
                            page=page_no,
                            order_by=order_by,
                            pagination=recipe_model.archive_pagination(query))
@@ -155,7 +201,6 @@ def index(page_no=None, order_by=None, author_name=None, tag_name=None, tag_valu
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     global author_model
-    # MultiDict([('username', 'mariusz')])
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
 
@@ -240,15 +285,67 @@ def new_recipe():
                            body_class='edit_recipe')
 
 
+@app.route('/recipe/edit/<recipe_id>', methods=['GET', 'POST'])
+@requires_auth
+def edit_recipe(recipe_id):
+    return True
+
+
 @app.route('/recipe/<recipe_id>')
 def view_recipe(recipe_id):
-    return recipe_id
+    """
+    session['recipe_views'] is used to avoid fake statistic with recipe views
+    """
+    if 'recipe_views' not in session:
+        session['recipe_views'] = []
+
+    if ObjectId.is_valid(recipe_id) and str(recipe_id) not in session['recipe_views']:
+        session['recipe_views'].append(str(recipe_id))
+        recipe_model.update_view_counter(ObjectId(recipe_id))
+
+    recipe = related = False
+
+    if ObjectId.is_valid(recipe_id):
+        recipe = recipe_model.view(ObjectId(recipe_id))
+        related = recipe_model.related(ObjectId(recipe_id), recipe['categories'])
+
+    return render_template('recipe_single.html',
+                           body_class='single_recipe',
+                           related=related,
+                           recipe=recipe)
 
 
 @app.route('/user/<user_id>')
 def user(user_id):
     user_db = author_model.get_one_by_id(ObjectId(user_id))
     return render_template('user.html', user_db=user_db)
+
+
+@app.route('/api/recipe-vote', methods=['POST'])
+@returns_json
+def recipe_vote():
+    if 'user' not in session:
+        return json.dumps({
+            'status': 'error',
+            'message': 'You need to login to vote for the recipe'
+        })
+
+    try:
+        recipe_id = ObjectId(request.form['id'])
+        total_votes = recipe_model.vote(recipe_id, session['user']['username'])
+
+        if isinstance(total_votes, int) and total_votes is not False:
+            return json.dumps({
+                'status': 'success',
+                'votes': total_votes
+            })
+    except:
+        pass
+
+    return json.dumps({
+        'status': 'error',
+        'message': 'An error occurred. Please try again'
+    })
 
 
 if __name__ == '__main__':

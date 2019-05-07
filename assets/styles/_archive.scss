@@ -7,6 +7,7 @@
   & > .col {
     margin-bottom: 1.5rem;
     float: none;
+    margin-left: 0 !important;
   }
 }
 
@@ -21,11 +22,122 @@
     text-transform: uppercase;
     line-height: 135%;
     font-size: 1.3rem;
+
+    a {
+      color: $primary-color;
+
+      &:hover {
+        color: $link-color;
+      }
+    }
   }
 
-  a {
-    .card_title {
-      color: $primary-color;
+  .recipeMeta {
+    border-top: 1px solid #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+
+    .col {
+      margin-bottom: 0.5rem;
     }
+  }
+}
+
+.archive_title {
+  font-size: 2rem;
+  margin-top: 1rem;
+  color: $primary-color;
+}
+
+button.voteForRecipe {
+  background-color: transparent;
+  color: #000;
+  border: none;
+  cursor: pointer;
+  box-shadow: none !important;
+  padding: 0;
+
+  &.voted,
+  &:hover {
+    color: $primary-color;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: transparent;
+  }
+
+  &.disabled {
+    color: #9F9F9F !important;
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+/*
+* SINGLE RECIPE
+*/
+
+aside {
+  .widget {
+    margin-bottom: 1rem;
+    background-color: #fff;
+    padding: 1rem;
+
+    .widget_title {
+      margin-top: 0;
+      padding-top: 0;
+      text-transform: uppercase;
+      font-size: 1.5rem;
+    }
+
+    a.col {
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  .allergens {
+    li {
+      color: #8a8a8a;
+    }
+  }
+}
+
+
+.recipeContent {
+  h1.recipeTitle {
+    font-size: 2rem;
+    text-transform: uppercase;
+    color: $primary-color;
+    margin-top: 0;
+  }
+
+  .method {
+    h3 {
+      font-size: 1.5rem;
+      text-transform: uppercase;
+    }
+
+    ol {
+      padding-left: 0.75rem;
+
+      li {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #d9d9d9;
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
+  .recipeMeta {
+    margin: 1rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
   }
 }
