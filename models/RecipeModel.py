@@ -97,6 +97,7 @@ class RecipeModel(DbModel):
                     return related
                 if exclude != recipe['_id']:
                     related.append(recipe)
+            return related
 
     def vote(self, recipe_id, username):
         recipe = self.get_one_by_id(recipe_id)
@@ -149,14 +150,3 @@ class RecipeModel(DbModel):
     @staticmethod
     def list_to_lower(data):
         return [x.lower() for x in data]
-
-
-"""
-for val in response:
-    new_dict.append(('method-{}'.format(k), val))
-    k += 1
-    
-multi_dic = MultiDict(new_dict)
-print(multi_dic)
-MultiDict([('method-0', 'Add some'), ('method-1', 'Add some'), ('method-2', 'Add two')])
-"""

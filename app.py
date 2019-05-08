@@ -55,7 +55,7 @@ def returns_json(f):
 @app.template_filter()
 def capitalize(text):
     """Convert a string to capitalize"""
-    return text[0].upper() + text[1:]
+    return text[0].upper() + text[1:] if len(text) > 0 else ''
 
 
 @app.template_filter()
@@ -302,6 +302,7 @@ def view_recipe(recipe_id):
     if ObjectId.is_valid(recipe_id):
         recipe = recipe_model.view(ObjectId(recipe_id))
         related = recipe_model.related(ObjectId(recipe_id), recipe['categories'])
+        # http://127.0.0.1:5000/recipe/5ccf2d78ceda74b3755a11cf
 
     return render_template('recipe_single.html',
                            body_class='single_recipe',

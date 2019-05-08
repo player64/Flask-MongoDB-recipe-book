@@ -1,4 +1,25 @@
-import M from 'materialize-css/dist/js/materialize.min.js';
+import M from 'materialize-css/dist/js/materialize.js';
+
+/*
+* in materialize there is a bug with deletion chip it's deleting chip on incorrect index
+* 'materialize-css/dist/js/materialize.js' needs to be tweaked
+*
+* _handleChipClick():7753
+* this.selectChip(index); replace with this.selectChip(index - 1);
+*
+* function _handleChipsKeydown:8047
+* on line 8065 after var selectIndex = currChips.chipsData.length; add selectIndex -= 1;
+*
+* function deleteChip(chipIndex):7996
+* after needs to be added chipIndex -= 1;
+*
+* on function _handleChipsKeydown:8046
+* currChips.selectChip(selectIndex) :8076 replace with currChips.selectChip(selectIndex-1);
+* this will fix correct
+*
+* or replace fixed package 'materialize-css/dist/js/materialize.js' with './materialize/materialize.js'
+*
+* */
 
 class RecipeChipFields {
 
@@ -62,13 +83,29 @@ class RecipeChipFields {
         const list = $(`#${formSelector} li`);
         if (!chipValue) return false;
 
+        let cc = 0;
         list.each(function () {
-            const input = $(this).find('input');
+            const _this = $(this);
+            const input = _this.find('input');
+            const label = _this.find('label');
 
-            if (input.val() === chipValue) {
-                $(this).remove();
+            // prevent last element deletion
+            if (list.length === 1) {
+                input.val('');
                 return false;
+            } else if (input.val() === chipValue) {
+                $(this).remove();
+                cc -= 1;
             }
+
+            const attrValue = label.attr('for').replace(/\d/, cc);
+
+            label.attr('for', attrValue);
+            input.attr({
+                id: attrValue,
+                name: attrValue
+            });
+            cc += 1;
         });
     }
 
@@ -116,8 +153,6 @@ function convertFieldList(fieldType, selector) {
     if (!fields.length) return false;
 
     // need define a const jquery got a problem to handle this in each loop
-    // const fieldType = this.fieldType;
-    // const selector = this.selector;
 
     fields.each(function (index) {
         const _this = $(this);
@@ -139,13 +174,16 @@ function convertFieldList(fieldType, selector) {
         if (fieldType === 'textarea') {
             const field = _this.find('textarea');
             if (field) {
-                // field.attr('name', 'method[]')
+
+                if (field.html() !== '') {
+                    field.height(field[0].scrollHeight * 1.2);
+                }
+
                 field.addClass('materialize-textarea');
             }
         }
     });
 }
-
 
 
 function addField(button) {
@@ -199,11 +237,12 @@ function updateFieldsAttr(selector) {
 }
 
 let hold = false;
+
 function deleteField(button) {
     /*
     * Used to delete field
     * */
-    if(hold) return false;
+    if (hold) return false;
 
     const selector = button.attr('data-selector');
     const index = button.attr('data-index');
@@ -220,9 +259,9 @@ function deleteField(button) {
     * second after new field creation
     */
 
-    setTimeout(()=>{
-        hold=false;
-        },500);
+    setTimeout(() => {
+        hold = false;
+    }, 500);
     hold = true;
 }
 
@@ -262,8 +301,8 @@ export function recipeEdit() {
             addField($(this));
         });
 
-         $('li button.delete').click(function () {
-             deleteField($(this));
+        $('li button.delete').click(function () {
+            deleteField($(this));
         });
     });
 }
