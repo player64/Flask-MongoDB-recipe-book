@@ -14,6 +14,11 @@ from webpackManifest import WebpackManifest
 
 # wireframe -> https://xd.adobe.com/spec/3363e2bb-a0eb-4512-659b-50443e231490-4552/
 
+"""
+https://devcenter.heroku.com/articles/config-vars
+https://devcenter.heroku.com/articles/heroku-local
+"""
+
 load_dotenv()
 
 app = Flask(__name__)
