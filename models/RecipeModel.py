@@ -56,13 +56,14 @@ class RecipeModel(DbModel):
             .limit(self.RecipeNoArchive)
 
     def archive_pagination(self, query):
-        return math.ceil(self.db.find(query).count() / self.RecipeNoArchive)
+        return math.ceil(self.db.count_documents(query) / self.RecipeNoArchive)
 
     def view(self, recipe_id):
         return self.get_one_by_id(recipe_id)
 
     def update_view_counter(self, recipe_id):
-        self.db.update(
+
+        self.db.update_one(
             {'_id': recipe_id},
             {'$inc': {
                 'views': +1,
