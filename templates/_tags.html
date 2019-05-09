@@ -3,7 +3,7 @@
     {% for tag in tags %}
         <a href="{{ url_for('index', tag_name=tag_name, tag_value=tag) }}" class="col">
             <button class="btn">
-                {{ tag }}
+                {{ tag|safe }}
             </button>
         </a>
     {% endfor %}

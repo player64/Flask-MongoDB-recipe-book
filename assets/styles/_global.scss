@@ -24,6 +24,12 @@
 }
 
 
+*,
+:after,
+:before {
+  box-sizing: border-box;
+}
+
 body {
   background-color: $bg-colour;
   padding-top: $sm-header-height;
@@ -33,7 +39,8 @@ body {
   }
 }
 
-ul.flashes {
+ul.flashes,
+ul.errors {
   li {
     padding: 0.5rem 1rem;
     color: #fff;
@@ -42,7 +49,8 @@ ul.flashes {
   }
 }
 
-.alerts {
+.alerts,
+ul.errors li {
   & > *:not(.btn) {
     padding: 0.5rem 1rem;
     color: #fff;
@@ -54,7 +62,8 @@ ul.flashes {
   background-color: color('light-green', 'darken-1');
 }
 
-.error {
+.error,
+ul.errors li {
   background-color: color('red', 'darken-1');
 }
 

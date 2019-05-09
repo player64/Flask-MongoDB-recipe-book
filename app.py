@@ -2,7 +2,7 @@ from flask import Flask, session, request, render_template, redirect, url_for, f
 from flask_pymongo import PyMongo
 from passlib.hash import sha256_crypt
 from datetime import datetime
-from bson.objectid import ObjectId, InvalidId
+from bson.objectid import ObjectId
 from functools import wraps
 from dotenv import load_dotenv
 import json
@@ -45,10 +45,12 @@ def returns_json(f):
     """
     Decorator returns json content-type in the header used for API endpoint
     """
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         r = f(*args, **kwargs)
         return Response(r, content_type='application/json; charset=utf-8')
+
     return decorated_function
 
 
@@ -154,11 +156,11 @@ def index(page_no=None, order_by=None, author_name=None, tag_name=None, tag_valu
         page_attr = {
             'name': 'author',
             'author': author_name,
-            'link': '/author/'+author_name
+            'link': '/author/' + author_name
         }
         query = {'author': author_name}
 
-        title += capitalize(author_name)+'\'s'
+        title += capitalize(author_name) + '\'s'
     elif tag_name is not None and tag_value is not None:
         page_attr = {
             'name': 'tag',
@@ -210,7 +212,7 @@ def login():
                 'username': author['username']
             }
             flash('Successfully logged in', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('index', author_name=author['username']))
 
         flash('Wrong username or password', 'error')
         return redirect(url_for('login'))
@@ -256,10 +258,12 @@ def register():
 def new_recipe():
     form = RecipeForm(request.form)
     if request.method == 'POST' and form.validate():
-        recipe_model.add(form, session['user']['username'])
-        return 'POST'
+        added_id = recipe_model.add(form, session['user']['username'])
+        flash('Recipe has been added', 'success')
+        return redirect(url_for('view_recipe', recipe_id=added_id))
     return render_template('recipe_edit.html',
                            form=form,
+                           form_action=url_for('new_recipe'),
                            title='Add recipe',
                            body_class='edit_recipe')
 
@@ -267,20 +271,49 @@ def new_recipe():
 @app.route('/recipe/edit/<recipe_id>', methods=['GET', 'POST'])
 @requires_auth
 def edit_recipe(recipe_id):
-    if ObjectId.is_valid(recipe_id):
-        recipe = recipe_model.edit_get(ObjectId(recipe_id), session['user']['username'])
-        if recipe is False:
-            return redirect(url_for('edit_recipe_prohibited'))
-        init_form = RecipeForm(recipe, request.form)
-        return render_template('recipe_edit.html',
-                               form=init_form,
-                               title='Edit recipe',
-                               body_class='edit_recipe')
+    if not ObjectId.is_valid(recipe_id):
+        return render_template('recipe_error.html',
+                               message="No recipe found",
+                               message_class='warning',
+                               btn_class='red darken-4')
+    recipe = recipe_model.edit_get(ObjectId(recipe_id), session['user']['username'])
+    if recipe is False:
+        return render_template('recipe_error.html',
+                               message="You can't edit someone recipe",
+                               message_class='error',
+                               btn_class='')
+    init_form = RecipeForm(recipe, request.form)
+    if request.method == 'POST' and init_form.validate():
+        data = RecipeForm(request.form)
+        recipe_model.update(data, ObjectId(recipe_id))
+        flash('Recipe has been edited', 'success')
+        return redirect(url_for('view_recipe', recipe_id=recipe_id))
+
+    return render_template('recipe_edit.html',
+                           form=init_form,
+                           form_action=url_for('edit_recipe', recipe_id=recipe_id),
+                           recipe_id=recipe_id,
+                           title='Edit recipe',
+                           body_class='edit_recipe')
 
 
-@app.route('/recipe/edit/prohibited')
-def edit_recipe_prohibited():
-    return render_template('recipe_edit_prohibited.html')
+@app.route('/recipe/delete/<recipe_id>')
+@requires_auth
+def delete_recipe(recipe_id):
+    if not ObjectId.is_valid(recipe_id):
+        return render_template('recipe_error.html',
+                               message="No recipe found",
+                               message_class='warning',
+                               btn_class='red darken-4')
+
+    if recipe_model.delete(ObjectId(recipe_id), session['user']['username']):
+        flash('Recipe has been successfully deleted', 'success')
+        return redirect(url_for('index', author_name=session['user']['username']))
+
+    return render_template('recipe_error.html',
+                           message="You can't delete someone recipe",
+                           message_class='error',
+                           btn_class='')
 
 
 @app.route('/recipe/<recipe_id>')
@@ -301,8 +334,14 @@ def view_recipe(recipe_id):
 
     if ObjectId.is_valid(recipe_id):
         recipe = recipe_model.view(ObjectId(recipe_id))
-        related = recipe_model.related(ObjectId(recipe_id), recipe['categories'])
-        # http://127.0.0.1:5000/recipe/5ccf2d78ceda74b3755a11cf
+
+        related_data = recipe['categories']
+        related_type = 'categories'
+        if len(recipe['categories']) < 1:
+            related_data = recipe['cuisines']
+            related_type = 'cuisines'
+
+        related = recipe_model.related(ObjectId(recipe_id), related_data, related_type)
 
     return render_template('recipe_single.html',
                            body_class='single_recipe',

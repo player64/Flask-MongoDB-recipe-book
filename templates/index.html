@@ -5,23 +5,23 @@
     <div class="row">
         <h1 class="archive_title col m8">{{ title }}</h1>
         <div class="col m4 right">
-        {% if recipes|length %}
-            <div class="input-field">
-                <select id="orderBy">
-                    <option value="{{ page_attr.link }}/page/{{ page }}"
-                            {% if order_by == 'created' %}selected{% endif %}>Latest
-                    </option>
-                    <option value="{{ page_attr.link }}/page/{{ page }}/order-by/views"
-                            {% if order_by == 'views' %}selected{% endif %}>Most popular
-                    </option>
-                    <option value="{{ page_attr.link }}/page/{{ page }}/order-by/likes"
-                            {% if order_by == 'likes' %}selected{% endif %}>Most likes
-                    </option>
-                </select>
-                <label>Order by</label>
-            </div>
-        </div>
-        {% endif %}
+            {% if recipes|length %}
+                <div class="input-field">
+                    <select id="orderBy">
+                        <option value="{{ page_attr.link }}/page/{{ page }}"
+                                {% if order_by == 'created' %}selected{% endif %}>Latest
+                        </option>
+                        <option value="{{ page_attr.link }}/page/{{ page }}/order-by/views"
+                                {% if order_by == 'views' %}selected{% endif %}>Most popular
+                        </option>
+                        <option value="{{ page_attr.link }}/page/{{ page }}/order-by/likes"
+                                {% if order_by == 'likes' %}selected{% endif %}>Most likes
+                        </option>
+                    </select>
+                    <label>Order by</label>
+                </div>
+                </div>
+            {% endif %}
     </div>
 
     {% if recipes|length %}
@@ -51,9 +51,20 @@
             </ul>
         {% endif %}
     {% else %}
-        <div class="center-align alerts">
-            <p class="warning">Any recipes found on selected criteria.</p>
-            <a href="{{ url_for('index') }}" class="waves-effect waves-light btn red darken-4">Go to home page</a>
+        <div class="center-align alerts" style="clear: both">
+            {% if page_attr.author == user.username %}
+                <p class="success">
+                    It seems you haven't got any recipe added
+                </p>
+                <a href="{{ url_for('new_recipe') }}"
+                   class="waves-effect waves-light btn-large red darken-4">
+                    Add recipe <i class="material-icons right">add</i></a>
+            {% else %}
+                <p class="warning">
+                    Any recipes found on selected criteria.
+                </p>
+                <a href="{{ url_for('index') }}" class="waves-effect waves-light btn red darken-4">Go to home page</a>
+            {% endif %}
         </div>
     {% endif %}
 {% endblock %}

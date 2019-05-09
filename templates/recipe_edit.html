@@ -7,7 +7,7 @@
         <div class="col s12">
             {% include '_messages.html' %}
             {% from "_formhelpers.html" import render_field %}
-            <form action="{{ url_for('new_recipe') }}" method="post">
+            <form action="{{ form_action }}" method="post">
                 <div class="row">
                     <div class="col m7">
                         <div class="row">
@@ -15,9 +15,15 @@
                             {{ render_field(form.introduction, 's12', class='materialize-textarea') }}
                             <div class="repeatField col s12">
                                 {{ form.method }}
+                                {% if form.method.errors %}
+                                    <ul class=errors>
+                                        <li>Method is required you should add at least one method</li>
+                                    </ul>
+                                {% endif %}
                                 <button type="button" class="addField waves-light btn-small">
                                     Add method <i class="material-icons right">add</i>
                                 </button>
+
                             </div>
                             <div class="hidden">
                                 {{ form.categories }}
@@ -29,6 +35,13 @@
                     <div class="col m4 offset-m1 sidebar">
                         <div class="repeatField sidebarField">
                             {{ form.ingredients }}
+                            {% if form.ingredients.errors %}
+                                <ul class=errors>
+                                    <li>
+                                        Ingredients are required you should add at least one ingredient
+                                    </li>
+                                </ul>
+                            {% endif %}
                             <button type="button" class="addField waves-light btn-small">
                                 Add ingredient
                                 <i class="material-icons right">add</i>
@@ -59,12 +72,9 @@
                             <input class="input" placeholder="Enter allergen">
                         </div>
                     </div>
-                    <div class="col s12 center-align">
-                        <button class="waves-effect waves-light btn-large red darken-4" type="submit">
-                            {{ title }}
-                        </button>
-                    </div>
                 </div>
+                {% from '_recipe_action.html' import recipe_action %}
+                {{ recipe_action(recipe_id, title) }}
             </form>
         </div>
     </div>

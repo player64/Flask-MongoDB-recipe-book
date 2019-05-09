@@ -1,21 +1,18 @@
 import M from 'materialize-css/dist/js/materialize.js';
 
 /*
-* in materialize there is a bug with deletion chip it's deleting chip on incorrect index
+* in materialize there is a bug with chip deletion it's deleting chip on incorrect index
 * 'materialize-css/dist/js/materialize.js' needs to be tweaked
 *
-* _handleChipClick():7753
+* _handleChipClick():7752
 * this.selectChip(index); replace with this.selectChip(index - 1);
 *
-* function _handleChipsKeydown:8047
-* on line 8065 after var selectIndex = currChips.chipsData.length; add selectIndex -= 1;
+* function _handleChipsKeydown:8044
+* on line 8065  var selectIndex = currChips.chipsData.length; after add selectIndex -= 1;
+* currChips.selectChip(selectIndex) :8075 replace with currChips.selectChip(selectIndex-1);
 *
-* function deleteChip(chipIndex):7996
+* function deleteChip(chipIndex):7994
 * after needs to be added chipIndex -= 1;
-*
-* on function _handleChipsKeydown:8046
-* currChips.selectChip(selectIndex) :8076 replace with currChips.selectChip(selectIndex-1);
-* this will fix correct
 *
 * or replace fixed package 'materialize-css/dist/js/materialize.js' with './materialize/materialize.js'
 *
@@ -192,7 +189,7 @@ function addField(button) {
     const fieldType = $(`#${listID}`).attr('data-field-type');
 
     if (fieldType === 'textarea') {
-        listToClone.find(fieldType).html('');
+        listToClone.find(fieldType).html('').removeAttr('style');
     } else if (fieldType === 'input') {
         listToClone.find(fieldType).val('');
     }

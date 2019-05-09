@@ -12,9 +12,6 @@ class RecipeModel(DbModel):
         super().__init__(mongo, self.TableName)
 
     def add(self, data, author):
-        # recipe = self.create_save_data(data, author, True)
-        # categories = self.Categories.add(data.categories.data)
-        # cuisines = self.Cuisines.add(data.cuisines.data)
         recipe = {
             'title': data.title.data,
             'introduction': data.introduction.data,
@@ -32,6 +29,24 @@ class RecipeModel(DbModel):
 
         id = self.db.insert_one(recipe)
         return id.inserted_id
+
+    def update(self, data, recipe_id):
+        recipe = {
+            'title': data.title.data,
+            'introduction': data.introduction.data,
+            'method': data.method.data,
+            'ingredients': data.ingredients.data,
+            'allergens': self.list_to_lower(data.allergens.data),
+            'categories': self.list_to_lower(data.categories.data),
+            'cuisines': self.list_to_lower(data.cuisines.data),
+            'edited': datetime.now()
+        }
+        attr = {
+            'name': '_id',
+            'value': recipe_id,
+            'data': recipe
+        }
+        self.update_one(attr)
 
     def get_archive(self, query, page_no, order_by):
         page_no -= 1
@@ -54,41 +69,52 @@ class RecipeModel(DbModel):
             }}
         )
 
+    def delete(self, recipe_id, username):
+        recipe = self.get_one_by_id(recipe_id)
+        if not recipe or recipe['author'] != username:
+            return False
+
+        self.delete_by_id(recipe_id)
+        return True
+
     def edit_get(self, recipe_id, username):
         recipe = self.get_one_by_id(recipe_id)
-        if recipe:
-            if recipe['author'] != username:
-                return False
+        if not recipe:
+            return False
+        if recipe['author'] != username:
+            return False
 
-            editable_keys = [
-                'title',
-                'introduction',
-                'method',
-                'ingredients',
-                'categories',
-                'cuisines',
-                'allergens'
-            ]
+        editable_keys = [
+            'title',
+            'introduction',
+            'method',
+            'ingredients',
+            'categories',
+            'cuisines',
+            'allergens'
+        ]
 
-            editable = []
-            for key in recipe.keys():
-                if key in editable_keys:
-                    if isinstance(recipe[key], list):
-                        c = 0
-                        for item in recipe[key]:
-                            editable.append(('{}-{}'.format(key, c), item))
-                            c += 1
-                    else:
-                        editable.append((key, recipe[key]))
-            return MultiDict(editable)
+        editable = []
+        for key in recipe.keys():
+            if key in editable_keys:
+                if isinstance(recipe[key], list):
+                    c = 0
+                    for item in recipe[key]:
+                        editable.append(('{}-{}'.format(key, c), item))
+                        c += 1
+                else:
+                    editable.append((key, recipe[key]))
+        return MultiDict(editable)
 
-    def related(self, exclude, categories):
+    def related(self, exclude, tags, tag_type):
+        if len(tags) == 0:
+            return []
         limit = 6
         related = []
-        for category in categories:
+        for category in tags:
             recipes = list(self.db.find(
                 {'$query': {
-                    'categories': {'$in': [category]}},
+                    tag_type: {'$in': [category]}},
                     '$orderby': {'views': -1}}).limit(limit))
 
             limit -= len(related)
@@ -126,27 +152,8 @@ class RecipeModel(DbModel):
             return likes
         return False
 
-    def fakestatistic(self):
-        for recipe in self.db.find():
-            views = self.random_key_list(150)
-
-            max_likes = 30 if views > 40 else views - 5
-
-            likes = self.random_key_list(max_likes)
-            self.db.update_one(
-                {'_id': recipe['_id']},
-                {'$set': {
-                    'views': views,
-                    'likes': likes
-                }}
-            )
-
-    @staticmethod
-    def random_key_list(max):
-        import random
-        max = max if max > 0 else 1
-        return random.randint(0, max)
-
     @staticmethod
     def list_to_lower(data):
+        if len(data) == 1 and data[0] == '':
+            return []
         return [x.lower() for x in data]

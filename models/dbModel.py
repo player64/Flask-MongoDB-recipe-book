@@ -13,7 +13,7 @@ class DbModel:
         self.TableName = table_name
         self.db = mongo.db[table_name]
 
-    def delete(self, table_id: ObjectId):
+    def delete_by_id(self, table_id: ObjectId):
         return self.db.remove({'_id': table_id})
 
     def get_one_by_id(self, table_id: ObjectId):
