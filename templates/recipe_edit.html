@@ -5,8 +5,8 @@
 {% block content %}
     <div class="row">
         <div class="col s12">
-            {% include '_messages.html' %}
-            {% from "_formhelpers.html" import render_field %}
+            {% include 'macros/_messages.html' %}
+            {% from "macros/_formhelpers.html" import render_field %}
             <form action="{{ form_action }}" method="post">
                 <div class="row">
                     <div class="col m7">
@@ -73,7 +73,7 @@
                         </div>
                     </div>
                 </div>
-                {% from '_recipe_action.html' import recipe_action %}
+                {% from 'macros/_recipe_action.html' import recipe_action %}
                 {{ recipe_action(recipe_id, title) }}
             </form>
         </div>

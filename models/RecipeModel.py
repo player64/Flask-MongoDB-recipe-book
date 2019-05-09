@@ -48,7 +48,7 @@ class RecipeModel(DbModel):
         }
         self.update_one(attr)
 
-    def get_archive(self, query, page_no, order_by):
+    def archive(self, query, page_no, order_by):
         page_no -= 1
 
         return self.db.find({'$query': query, '$orderby': {order_by: -1}}) \
@@ -77,7 +77,7 @@ class RecipeModel(DbModel):
         self.delete_by_id(recipe_id)
         return True
 
-    def edit_get(self, recipe_id, username):
+    def get_edit_data(self, recipe_id, username):
         recipe = self.get_one_by_id(recipe_id)
         if not recipe:
             return False
@@ -100,8 +100,9 @@ class RecipeModel(DbModel):
                 if isinstance(recipe[key], list):
                     c = 0
                     for item in recipe[key]:
-                        editable.append(('{}-{}'.format(key, c), item))
-                        c += 1
+                        if item:
+                            editable.append(('{}-{}'.format(key, c), item))
+                            c += 1
                 else:
                     editable.append((key, recipe[key]))
         return MultiDict(editable)

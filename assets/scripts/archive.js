@@ -5,7 +5,7 @@ export function archiveView() {
         const elems = document.querySelectorAll('select');
         M.FormSelect.init(elems, {});
 
-        $('#orderBy').on('change', function () {
+        $('.optionLink').on('change', function () {
             window.location.href = $(this).val();
         });
     });

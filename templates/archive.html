@@ -1,13 +1,30 @@
 {% extends 'base.html' %}
-
 {% block content %}
-    {% include '_messages.html' %}
+    {% include 'macros/_messages.html' %}
     <div class="row">
-        <h1 class="archive_title col m8">{{ title }}</h1>
-        <div class="col m4 right">
-            {% if recipes|length %}
+        <h1 class="archive_title col m6">{{ title }}</h1>
+        {% if page_attr.name == 'author' %}
+            <div class="col m3 {{ 'offset-m3' if not recipes|length else '' }}">
                 <div class="input-field">
-                    <select id="orderBy">
+                    <select id="show" class="optionLink">
+                        <option value="/author/{{ page_attr.author }}/page/1"
+                                {% if 'liked' not in page_attr %}selected{% endif %}>{{ 'Your recipes' if
+                                'own_recipes' in page_attr else 'Author recipes' }}
+                        </option>
+                        <option
+                            value="/author/{{ page_attr.author }}/show/liked/page/1/order-by/{{ order_by }}"
+                            {% if 'liked' in page_attr %}selected{% endif %}>{{ 'Your liked recipes' if 'own_recipes' in
+                                page_attr else 'Author likes' }}
+                        </option>
+                    </select>
+                    <label for="orderBy">Show</label>
+                </div>
+            </div>
+        {% endif %}
+        {% if recipes|length %}
+            <div class="col m3 right">
+                <div class="input-field">
+                    <select id="orderBy" class="optionLink">
                         <option value="{{ page_attr.link }}/page/{{ page }}"
                                 {% if order_by == 'created' %}selected{% endif %}>Latest
                         </option>
@@ -15,18 +32,17 @@
                                 {% if order_by == 'views' %}selected{% endif %}>Most popular
                         </option>
                         <option value="{{ page_attr.link }}/page/{{ page }}/order-by/likes"
-                                {% if order_by == 'likes' %}selected{% endif %}>Most likes
+                                {% if order_by == 'likes' %}selected{% endif %}>Most liked
                         </option>
                     </select>
-                    <label>Order by</label>
+                    <label for="orderBy">Order by</label>
                 </div>
-                </div>
-            {% endif %}
+            </div>
+        {% endif %}
     </div>
-
     {% if recipes|length %}
         <div class="row recipeArchive flexPos threeColumn">
-            {% from "_recipe_card.html" import recipe_card with context %}
+            {% from "macros/_recipe_card.html" import recipe_card with context %}
             {% for recipe in recipes %}
                 {{ recipe_card(recipe, 'm6 xl4') }}
             {% endfor %}
@@ -63,7 +79,8 @@
                 <p class="warning">
                     Any recipes found on selected criteria.
                 </p>
-                <a href="{{ url_for('index') }}" class="waves-effect waves-light btn red darken-4">Go to home page</a>
+                <a href="javascript:history.go(-1)" class="waves-effect waves-light btn red darken-4">Go to previous
+                    page</a>
             {% endif %}
         </div>
     {% endif %}

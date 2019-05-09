@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    {% include '_messages.html' %}
+    {% include 'macros/_messages.html' %}
     {% if recipe %}
         <div class="row">
             <article class="col m7 recipeContent">
@@ -21,7 +21,7 @@
                     </section>
                 {% endif %}
                 <section class="recipeMeta row">
-                    {% from "_recipe_meta.html" import recipe_meta with context %}
+                    {% from "macros/_recipe_meta.html" import recipe_meta with context %}
                     {{ recipe_meta(recipe, 's6 l3') }}
                 </section>
                 {% if user.username == recipe.author %}
@@ -42,7 +42,7 @@
                         </ul>
                     </div>
                 {% endif %}
-                {% from "_tags.html" import render_tags %}
+                {% from "macros/_tags.html" import render_tags %}
                 {% if recipe.categories|length %}
                     <div class="widget categories row">
                         {{ render_tags(recipe.categories, 'Categories', 'categories') }}
@@ -69,7 +69,7 @@
             <div class="relatedRecipes">
                 <div class="row recipeArchive flexPos">
                     <h2 class="col s12">Related recipes</h2>
-                    {% from '_recipe_card.html' import recipe_card with context %}
+                    {% from 'macros/_recipe_card.html' import recipe_card with context %}
                     {% for related_recipe in related %}
                         {{ recipe_card(related_recipe, 'm6 xl4') }}
                     {% endfor %}

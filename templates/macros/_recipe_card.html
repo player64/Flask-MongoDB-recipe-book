@@ -10,7 +10,7 @@
                 <p>{{ string_limit(recipe.introduction, 30) }}</p>
             {% endif %}
             <div class="row recipeMeta">
-                {% from "_recipe_meta.html" import recipe_meta with context %}
+                {% from "macros/_recipe_meta.html" import recipe_meta with context %}
                 {{ recipe_meta(recipe, 'l6') }}
             </div>
             <div class="row">

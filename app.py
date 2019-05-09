@@ -9,7 +9,6 @@ import json
 import os
 from models.AuthorModel import AuthorModel
 from models.RecipeModel import RecipeModel
-from models.CategoryModel import CategoryModel
 from forms import RegistrationForm, LoginForm, RecipeForm
 from webpackManifest import WebpackManifest
 
@@ -45,7 +44,6 @@ def returns_json(f):
     """
     Decorator returns json content-type in the header used for API endpoint
     """
-
     @wraps(f)
     def decorated_function(*args, **kwargs):
         r = f(*args, **kwargs)
@@ -67,6 +65,7 @@ def truncate_text(text):
 
 @app.context_processor
 def template_functions():
+    """ Inject global data to templates """
     def string_limit(text, limit):
         short_text = text.split(' ')[:limit]
         str = '...' if len(short_text) >= limit else ''
@@ -85,6 +84,9 @@ def template_functions():
             paginate += 1
 
         if attr['name'] == 'author':
+            if 'liked' in attr:
+                return url_for('index', page_no=paginate, order_by=order, author_name=attr['author'],
+                               author_types='liked')
             return url_for('index', page_no=paginate, order_by=order, author_name=attr['author'])
         elif attr['name'] == 'tag':
             return url_for('index', page_no=paginate, order_by=order,
@@ -105,7 +107,10 @@ def template_functions():
             return 'voted'
         return ''
 
-    return dict(string_limit=string_limit, pagination_url=pagination_url, recipe_vote_class=recipe_vote_class)
+    return dict(string_limit=string_limit,
+                pagination_url=pagination_url,
+                recipe_vote_class=recipe_vote_class,
+                user=author_model.logged_as())
 
 
 """
@@ -113,16 +118,12 @@ Initialize models
 """
 author_model = AuthorModel(mongo)
 recipe_model = RecipeModel(mongo)
-cuisine_model = CategoryModel(mongo, 'cuisines')
-category_model = CategoryModel(mongo, 'categories')
 
 
-@app.context_processor
-def inject_to_template():
-    """ Inject global data to templates """
-    return dict(user=author_model.logged_as())
-
-
+@app.route('/author/<author_name>/show/<author_types>/page/<page_no>')
+@app.route('/author/<author_name>/show/<author_types>/page/<page_no>/order-by/<order_by>')
+@app.route('/author/<author_name>/show/<author_types>/order-by/<order_by>')
+@app.route('/author/<author_name>/show/<author_types>')
 @app.route('/author/<author_name>/page/<page_no>')
 @app.route('/author/<author_name>/page/<page_no>/order-by/<order_by>')
 @app.route('/author/<author_name>/order-by/<order_by>')
@@ -135,7 +136,7 @@ def inject_to_template():
 @app.route('/page/<page_no>/order-by/<order_by>')
 @app.route('/order-by/<order_by>')
 @app.route('/')
-def index(page_no=None, order_by=None, author_name=None, tag_name=None, tag_value=None):
+def index(page_no=None, order_by=None, author_name=None, tag_name=None, tag_value=None, author_types=None):
     if not page_no:
         page_no = 1
     else:
@@ -160,7 +161,23 @@ def index(page_no=None, order_by=None, author_name=None, tag_name=None, tag_valu
         }
         query = {'author': author_name}
 
-        title += capitalize(author_name) + '\'s'
+        title += capitalize(author_name) + '\'s '
+        if 'user' in session and session['user']['username'] == author_name:
+            title = 'Your '
+            page_attr.update({
+                'own_recipes': True
+            })
+
+        if author_types is not None:
+            page_attr.update({
+                'link': '/author/' + author_name + '/show/liked',
+                'liked': True,
+            })
+
+            title += 'liked '
+
+            query = {'liked_by': {'$in': [author_name]}}
+
     elif tag_name is not None and tag_value is not None:
         page_attr = {
             'name': 'tag',
@@ -179,17 +196,17 @@ def index(page_no=None, order_by=None, author_name=None, tag_name=None, tag_valu
 
         title += capitalize(tag_value)
 
-    title += ' - ' if title is not '' else ''
+    title += 'most' if title else 'Most'
 
     if order_by == 'views':
-        title += 'Most popular recipes'
+        title += ' popular recipes'
     elif order_by == 'likes':
-        title += 'Most likes recipes'
+        title += ' liked recipes'
     else:
-        title += 'Most recent recipes'
+        title += ' recent recipes'
 
-    recipes = recipe_model.get_archive(query, page_no, order_by)
-    return render_template('index.html',
+    recipes = recipe_model.archive(query, page_no, order_by)
+    return render_template('archive.html',
                            body_class='archive',
                            page_attr=page_attr,
                            recipes=list(recipes),
@@ -276,7 +293,7 @@ def edit_recipe(recipe_id):
                                message="No recipe found",
                                message_class='warning',
                                btn_class='red darken-4')
-    recipe = recipe_model.edit_get(ObjectId(recipe_id), session['user']['username'])
+    recipe = recipe_model.get_edit_data(ObjectId(recipe_id), session['user']['username'])
     if recipe is False:
         return render_template('recipe_error.html',
                                message="You can't edit someone recipe",
@@ -347,12 +364,6 @@ def view_recipe(recipe_id):
                            body_class='single_recipe',
                            related=related,
                            recipe=recipe)
-
-
-@app.route('/user/<user_id>')
-def user(user_id):
-    user_db = author_model.get_one_by_id(ObjectId(user_id))
-    return render_template('user.html', user_db=user_db)
 
 
 @app.route('/api/recipe-vote', methods=['POST'])
