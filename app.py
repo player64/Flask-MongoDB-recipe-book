@@ -389,8 +389,8 @@ def recipe_vote():
                 'status': 'success',
                 'votes': total_votes
             })
-    except:
-        pass
+    except Exception as error:
+        print(error)
 
     return json.dumps({
         'status': 'error',

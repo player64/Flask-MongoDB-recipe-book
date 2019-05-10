@@ -5,7 +5,8 @@ from werkzeug.datastructures import MultiDict
 
 class FormsTestCase(unittest.TestCase):
 
-    def test_login_fail(self):
+    def test_login(self):
+        # fail
         data = []
         form = LoginForm(MultiDict(data))
         should_return = {
@@ -15,7 +16,7 @@ class FormsTestCase(unittest.TestCase):
         self.assertFalse(form.validate())
         self.assertDictEqual(form.errors, should_return)
 
-    def test_login_field_success(self):
+        # success
         data = [
             ('username', 'test'),
             ('password', 'test')
@@ -24,9 +25,9 @@ class FormsTestCase(unittest.TestCase):
         self.assertTrue(form.validate())
         self.assertEqual(form.errors, {})
 
-    def test_registration_match_password(self):
+    def test_registration(self):
         data = [
-            ('username', '111'),
+            ('username', 'me'),
             ('password', 'test_password'),
             ('confirm', 'test_confirm'),
         ]
