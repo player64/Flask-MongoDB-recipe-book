@@ -36,12 +36,11 @@ The project is built in the minimal layout. Each recipe has got statistic such v
 ## Testing
 * Unit test are written to check functionality of the routes on events logins, edit, delete 
 * Form unit test are written to check forms validation
-* The website has been passed [HTML validation](https://validator.w3.org/nu/?doc=https%3A%2F%2Fplayer64.github.io%2FInteractive-Frontend-Development%2F)
-* The website has been passed [CSS validation](https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fplayer64.github.io%2FInteractive-Frontend-Development%2F&profile=css3svg&usermedium=all&warning=1&vextwarning=)
+* The website has been passed [HTML validation](https://validator.w3.org/nu/?doc=https%3A%2F%2Fawesome-recipes-ci.herokuapp.com%2F)
 * The website has been tested on various screen sizes
 
 ## Deployment
-The application is deployed to [Heroku](https://xd.adobe.com/view/634d2933-4989-4354-4df1-ba55f3eb927e-157c/?fullscreen)
+The application is deployed to [Heroku](https://awesome-recipes-ci.herokuapp.com/)
 
 ### Source files
 Assets files are in assets folder
