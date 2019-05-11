@@ -5,7 +5,7 @@ from werkzeug.datastructures import MultiDict
 
 class FormsTestCase(unittest.TestCase):
 
-    def test_login(self):
+    def test_fail_login(self):
         # fail
         data = []
         form = LoginForm(MultiDict(data))
@@ -16,6 +16,7 @@ class FormsTestCase(unittest.TestCase):
         self.assertFalse(form.validate())
         self.assertDictEqual(form.errors, should_return)
 
+    def test_success_login(self):
         # success
         data = [
             ('username', 'test'),

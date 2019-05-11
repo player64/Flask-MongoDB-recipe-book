@@ -12,8 +12,6 @@ from models.RecipeModel import RecipeModel
 from forms import RegistrationForm, LoginForm, RecipeForm
 from webpackManifest import WebpackManifest
 
-# wireframe -> https://xd.adobe.com/spec/3363e2bb-a0eb-4512-659b-50443e231490-4552/
-
 """
 https://devcenter.heroku.com/articles/config-vars
 https://devcenter.heroku.com/articles/heroku-local
@@ -22,8 +20,13 @@ https://devcenter.heroku.com/articles/heroku-local
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY')
-app.config["MONGO_URI"] = os.getenv('MONGO_URI')
+if os.getenv('ENVIRONMENT', 'development'):
+    app.secret_key = os.getenv('SECRET_KEY')
+    app.config["MONGO_URI"] = os.getenv('MONGO_URI')
+else:
+    app.secret_key = os.environ.get('SECRET_KEY')
+    app.config["MONGO_URI"] = os.environ.get('MONGO_URI')
+
 mongo = PyMongo(app)
 
 manifest_params = {
@@ -201,7 +204,7 @@ def index(page_no=None, order_by=None, author_name=None, tag_name=None, tag_valu
 
         title += capitalize(tag_value)
 
-    title += 'most' if title else 'Most'
+    title += ' most' if title else 'Most'
 
     if order_by == 'views':
         title += ' popular recipes'
@@ -399,4 +402,4 @@ def recipe_vote():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host=os.environ.get('IP'), port=os.environ.get('PORT'), debug=True)

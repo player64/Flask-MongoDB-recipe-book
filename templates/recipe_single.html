@@ -26,7 +26,7 @@
                 </section>
                 {% if user.username == recipe.author %}
                     <a href="{{ url_for('edit_recipe', recipe_id=recipe._id) }}"
-                       class="waves-effect waves-light btn-large">
+                       class="waves-effect waves-light btn-large editRecipeBtn">
                         Edit recipe <i class="material-icons right">edit</i>
                     </a>
                 {% endif %}
@@ -63,6 +63,11 @@
                         </ul>
                     </div>
                 {% endif %}
+                <div class="widget allergens row">
+                    <h4 class="col s12 widget_title">Statistics</h4>
+                    <div id="recipeStatisticChart"></div>
+                </div>
+
             </aside>
         </div>
         {% if related|length %}
@@ -81,5 +86,78 @@
             <p class="warning">No recipe found</p>
             <a href="{{ url_for('index') }}" class="waves-effect waves-light btn red darken-4">Go to home page</a>
         </div>
+    {% endif %}
+{% endblock %}
+
+{% block footer %}
+    {% if recipe %}
+{#        <script src="https://d3js.org/d3.v4.js"></script>
+        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+        <script>
+            const width = 300;
+            const height = 300;
+            const margin = 40;
+
+            // The radius of the pieplot is half the width or half the height (smallest one). I substract a bit of margin.
+            const radius = Math.min(width, height) / 2 - margin;
+
+            const svg = d3.select("#recipeStatisticChart")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+            // Create data
+            const data = {
+                views: parseInt(document.getElementById('recipeViews').innerHTML),
+                likes: parseInt(document.getElementById('recipeLikes').innerHTML)
+            };
+
+            // set the color scale
+            const color = d3.scaleOrdinal()
+                .domain(data)
+                .range(d3.schemeSet2);
+
+            // Compute the position of each group on the pie:
+            const pie = d3.pie()
+                .value(function (d) {
+                    return d.value;
+                });
+            const data_ready = pie(d3.entries(data));
+            // Now I know that group A goes from 0 degrees to x degrees and so on.
+
+            // shape helper to build arcs:
+            const arcGenerator = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+
+            svg
+                .selectAll('mySlices')
+                .data(data_ready)
+                .enter()
+                .append('path')
+                .attr('d', arcGenerator)
+                .attr('fill', function (d) {
+                    return (color(d.data.value));
+                })
+                .attr("stroke", "white")
+                .style("stroke-width", "2px")
+                .style("opacity", 0.7);
+
+            // Now add the annotation. Use the centroid method to get the best coordinates
+            svg
+                .selectAll('mySlices')
+                .data(data_ready)
+                .enter()
+                .append('text')
+                .text(function (d) {
+                    return d.data.value + ' ' + d.data.key;
+                })
+                .attr("transform", function (d) {
+                    return "translate(" + arcGenerator.centroid(d) + ")";
+                })
+                .style("text-anchor", "middle")
+        </script>#}
     {% endif %}
 {% endblock %}

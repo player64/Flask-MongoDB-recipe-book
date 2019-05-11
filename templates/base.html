@@ -1,27 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recipe book</title>
-  {{ manifest_css('app.css') | safe }}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recipe book</title>
+    {{ manifest_css('vendors~app.css') | safe }}
+    {{ manifest_css('app.css') | safe }}
 </head>
 <body class="{{ body_class }}">
 {% include '_header.html' %}
 <main class="content">
-  <div class="container">
-    {% block title %}
-    {% endblock %}
-    {% block content %}
-    {% endblock %}
-  </div>
+    <div class="container">
+        {% block title %}
+        {% endblock %}
+        {% block content %}
+        {% endblock %}
+    </div>
 </main>
-{{ manifest_js('npm.style-loader.js') | safe }}
+{% block footer %}
+{% endblock %}
 {{ manifest_js('runtime.js') | safe }}
 {{ manifest_js('npm.core-js.js') | safe }}
-{{ manifest_js('npm.jquery.js') | safe }}
-{{ manifest_js('npm.material-icons.js') | safe }}
+{{ manifest_js('npm.d3-geo.js') | safe }}
+{{ manifest_js('npm.d3-shape.js') | safe }}
+{{ manifest_js('npm.d3-selection.js') | safe }}
+{{ manifest_js('npm.d3-scale-chromatic.js') | safe }}
+{{ manifest_js('npm.d3-array.js') | safe }}
+{{ manifest_js('npm.d3-hierarchy.js') | safe }}
+{{ manifest_js('npm.d3-transition.js') | safe }}
+{{ manifest_js('npm.d3-interpolate.js') | safe }}
+{{ manifest_js('npm.d3-scale.js') | safe }}
+{{ manifest_js('npm.d3-time.js') | safe }}
+{{ manifest_js('npm.d3-format.js') | safe }}
+{{ manifest_js('npm.d3-quadtree.js') | safe }}
+{{ manifest_js('npm.d3-force.js') | safe }}
+{{ manifest_js('npm.d3-contour.js') | safe }}
+{{ manifest_js('npm.d3-voronoi.js') | safe }}
+{{ manifest_js('npm.d3-color.js') | safe }}
+{{ manifest_js('npm.d3-zoom.js') | safe }}
+{{ manifest_js('npm.d3-brush.js') | safe }}
+{{ manifest_js('npm.d3-time-format.js') | safe }}
 {{ manifest_js('npm.materialize-css.js') | safe }}
+{{ manifest_js('npm.style-loader.js') | safe }}
+{{ manifest_js('npm.jquery.js') | safe }}
+{{ manifest_js('vendors~app.js') | safe }}
+{{ manifest_js('npm.material-icons.js') | safe }}
 {{ manifest_js('app.js') | safe }}
 </body>
 </html>

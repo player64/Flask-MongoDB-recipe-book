@@ -7,13 +7,13 @@
     </div>
     <div class="col {{ single_class }}">
         <i class="material-icons left">visibility</i>
-        {{ recipe.views }} views
+        <span id="recipeViews">{{ recipe.views }}</span> views
     </div>
     <div class="col {{ single_class }}">
         <button class="voteForRecipe {{ recipe_vote_class(recipe) }}"
                 {% if user %}data-recipe-id="{{ recipe._id }}"{% endif %}>
             <i class="material-icons left">thumb_up</i>
-            <span>{{ recipe.likes }}</span> likes
+            <span id="recipeLikes">{{ recipe.likes }}</span> likes
         </button>
     </div>
     <div class="col {{ single_class }}">

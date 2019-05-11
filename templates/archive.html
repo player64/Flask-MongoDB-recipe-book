@@ -2,9 +2,9 @@
 {% block content %}
     {% include 'macros/_messages.html' %}
     <div class="row">
-        <h1 class="archive_title col m6">{{ title }}</h1>
+        <h1 class="archive_title col m12 l6">{{ title }}</h1>
         {% if page_attr.name == 'author' %}
-            <div class="col m3 {{ 'offset-m3' if not recipes|length else '' }}">
+            <div class="col s12 m6 l3 {{ 'offset-m3' if not recipes|length else '' }}">
                 <div class="input-field">
                     <select id="show" class="optionLink">
                         <option value="/author/{{ page_attr.author }}/page/1"
@@ -22,7 +22,7 @@
             </div>
         {% endif %}
         {% if recipes|length %}
-            <div class="col m3 right">
+            <div class="col s12 m6 l3 right">
                 <div class="input-field">
                     <select id="orderBy" class="optionLink">
                         <option value="{{ page_attr.link }}/page/{{ page }}"

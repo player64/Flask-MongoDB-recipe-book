@@ -1,5 +1,6 @@
 import M from 'materialize-css/dist/js/materialize.js';
 
+
 /*
 *  materialize has got a bug with chip deletion. It's deleting chip on incorrect index
 * 'materialize-css/dist/js/materialize.js' needs to be tweaked
