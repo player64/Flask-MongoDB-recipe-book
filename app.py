@@ -12,11 +12,6 @@ from models.RecipeModel import RecipeModel
 from forms import RegistrationForm, LoginForm, RecipeForm
 from webpackManifest import WebpackManifest
 
-"""
-https://devcenter.heroku.com/articles/config-vars
-https://devcenter.heroku.com/articles/heroku-local
-"""
-
 load_dotenv()
 
 app = Flask(__name__)
@@ -402,4 +397,4 @@ def recipe_vote():
 
 
 if __name__ == '__main__':
-    app.run(host=os.environ.get('IP'), port=os.environ.get('PORT'), debug=True)
+    app.run(host=os.environ.get('IP'), port=os.environ.get('PORT'), debug=False)
