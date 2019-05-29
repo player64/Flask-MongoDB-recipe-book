@@ -23,7 +23,7 @@ class AppTestCase(unittest.TestCase):
     def test_success_login(self):
         valid_login = self.authenticate()
         self.assertIn(b'Successfully logged in', valid_login.data)
-        self.assertIn(b'Your most recent recipes', valid_login.data)
+        self.assertIn(b'Your  most recent recipes', valid_login.data)
 
     def test_failed_login(self):
         response = self.tester.get('/login', content_type='html/text')
@@ -48,7 +48,7 @@ class AppTestCase(unittest.TestCase):
         response = self.tester.get('/api/recipe-vote', content_type='html/text')
         self.assertIn(b'method is not allowed', response.data)
 
-        json_response = self.tester.post('/api/recipe-vote', content_type='/api/recipe-vote')
+        json_response = self.tester.post('/api/recipe-vote', content_type='application/json')
         self.assertIn('application/json', json_response.content_type)
         data = json.loads(json_response.get_data(as_text=True))
         should_response = {
