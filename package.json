@@ -1,4 +1,7 @@
 {
+  "name": "awesome-recipes",
+  "version": "1.0.0",
+  "description": "Webpack for assets files",
   "scripts": {
     "build": "webpack --config assets/webpack/webpack.config.prod.js  --colors",
     "start": "webpack --watch --config assets/webpack/webpack.config.dev.js"
@@ -34,7 +37,6 @@
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "core-js": "^3.0.1",
-    "d3": "^5.9.2",
     "jquery": "^3.4.0",
     "material-icons": "^0.3.1",
     "materialize-css": "^1.0.0"

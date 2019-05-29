@@ -1,18 +1,12 @@
 {
-  "app.css": "css/app.36481ed4.css",
-  "app.js": "js/app.52797294.chunk.js",
-  "npm.core-js.js": "js/npm.core-js.44337df2.chunk.js",
-  "npm.d3-geo.js": "js/npm.d3-geo.d3479dcf.chunk.js",
-  "npm.d3-hierarchy.js": "js/npm.d3-hierarchy.9e072844.chunk.js",
-  "npm.d3-scale.js": "js/npm.d3-scale.50e9c7bf.chunk.js",
-  "npm.d3-shape.js": "js/npm.d3-shape.33fc6129.chunk.js",
-  "npm.jquery.js": "js/npm.jquery.be3f37f4.chunk.js",
-  "npm.materialize-css.js": "js/npm.materialize-css.5f8ffd36.chunk.js",
-  "runtime.js": "js/runtime.daeb26d1.js",
+  "app.css": "css/app.8475c95f.css",
+  "app.js": "js/app.69ffac5d.chunk.js",
+  "npm.core-js.js": "js/npm.core-js.f6a28dc6.chunk.js",
+  "npm.jquery.js": "js/npm.jquery.8b4544f6.chunk.js",
+  "npm.materialize-css.js": "js/npm.materialize-css.317ee0da.chunk.js",
+  "runtime.js": "js/runtime.93d60c3a.js",
   "vendor/MaterialIcons-Regular.eot": "vendor/MaterialIcons-Regular.eot",
   "vendor/MaterialIcons-Regular.ttf": "vendor/MaterialIcons-Regular.ttf",
   "vendor/MaterialIcons-Regular.woff": "vendor/MaterialIcons-Regular.woff",
-  "vendor/MaterialIcons-Regular.woff2": "vendor/MaterialIcons-Regular.woff2",
-  "vendors~app.css": "css/vendors~app.36481ed4.css",
-  "vendors~app.js": "js/vendors~app.3ff01f27.chunk.js"
+  "vendor/MaterialIcons-Regular.woff2": "vendor/MaterialIcons-Regular.woff2"
 }
